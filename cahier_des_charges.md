@@ -7,7 +7,7 @@ Groupe composé de : Durand Clément, Garcia Amandine, Pereira Mathis, Thiery An
 ## Contexte 
 
 Les drones civils sont de plus en plus présents dans notre espace aérien. Si leur utilisation légitime ne cesse de croître, ils représentent également des risques potentiels pour la sécurité des infrastructures sensibles, des événements publics et de la vie privée. La détection et l’identification de drones non autorisés constituent un enjeu majeur pour la sécurité.
-Dans ce cadre, une entreprise spécialisée dans la sécurité des sites sensibles a fait appel au CATIE pour développer un système de détection de drones à partir d’images capturées par différents types de caméras
+Dans ce cadre, une entreprise spécialisée dans la sécurité des sites sensibles a fait appel au CATIE pour développer un système de détection de drones à partir d’images capturées par différents types de caméras.
 
 ### Objectifs 
 
@@ -20,9 +20,9 @@ La priorité est d'éviter à tout prix de ne pas détecter les drones présents
 
 **Modèle de détection :** YOLO (pré-entraîné ou fine-tuning).
 
-**Bases de données (optionnel):** Kaggle, Anti-UAV Dataset, Drone Detection Dataset
+**Bases de données (optionnel):** Kaggle, Anti-UAV Dataset, Drone Detection Dataset, Création de notre propre dataset avec l'API Blender et un model du drone.
 
-**Techniques complémentaires :** soustraction de fond / effacement statique pour détecter le mouvement du drone par rapport à l’arrière-plan.
+**Techniques complémentaires :** Soustraction de fond / effacement statique pour détecter le mouvement du drone par rapport à l’arrière-plan.
 
 ### Contraintes
 
@@ -30,9 +30,9 @@ La priorité est d'éviter à tout prix de ne pas détecter les drones présents
 
 - Taux de faux négatifs = 0%, faux positifs minimisés.
 
-- Fonctionnement sur divers types de caméras et conditions d’éclairage.
+- Fonctionnement sur divers types de caméras connues à l'avance et conditions d’éclairage.
 
-- Temps de calcul inférieur au temps de déplacement du drone.
+- Rapidité de détection cohérente avec la vitesse du drône.
 
 ## Verrous technologiques
 
@@ -42,7 +42,7 @@ Ces facteurs rendent la reconnaissance instable, notamment lorsque le drone se c
 
 - **Absence de suivi temporel**  
 Le modèle YOLO réalise une détection image par image, sans continuité temporelle.
-Cette approche peut provoquer des pertes de détection ponctuelles et nuit à la stabilité du suivi d’objet, essentielle pour une reconnaissance cohérente dans le temps.
+Cette approche peut provoquer des pertes de détection ponctuelles et nuit à la stabilité du suivi d’objet, essentielle pour une reconnaissance cohérente dans le temps. Il va falloir implémenter un suivi de tracking.
 
 - **Absence de classe “drone” dans les modèles existants**  
 Les modèles YOLO pré-entraînés ne comportent pas la classe “drone” dans leurs ensembles de données d’origine.
