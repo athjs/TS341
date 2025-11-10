@@ -12,3 +12,4 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/dist /usr/share/
+CMD ["poetry", "run", "python", "ts341_example/app.py"]
