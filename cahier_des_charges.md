@@ -2,6 +2,8 @@
 
 _à rendre pour le 12/11/2025_
 
+Groupe composé de : Durand Clément, Garcia Amandine, Pereira Mathis, Thiery Antony
+
 ## Contexte 
 
 Les drones civils sont de plus en plus présents dans notre espace aérien. Si leur utilisation légitime ne cesse de croître, ils représentent également des risques potentiels pour la sécurité des infrastructures sensibles, des événements publics et de la vie privée. La détection et l’identification de drones non autorisés constituent un enjeu majeur pour la sécurité.
@@ -48,7 +50,7 @@ Il est donc nécessaire de disposer d’un jeu de données spécifique ou de pro
 
 - **Disponibilité et diversité limitées des données vidéo**  
 Les vidéos actuellement disponibles pour le projet ne couvrent qu’un nombre restreint de situations de vol.
-Pour améliorer la robustesse et la généralisation du modèle, il est indispensable de collecter ou rechercher des séquences supplémentaires de drones dans des contextes variés (angles, environnements, conditions lumineuses, tailles, vitesses).
+Pour améliorer la robustesse et la généralisation du modèle, il est préferable de collecter ou rechercher des séquences supplémentaires de drones dans des contextes variés (angles, environnements, conditions lumineuses, tailles, vitesses).
 
 ## Description du projet
 
