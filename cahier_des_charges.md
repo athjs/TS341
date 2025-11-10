@@ -7,30 +7,48 @@ _à rendre pour le 12/11/2025_
 Les drones civils sont de plus en plus présents dans notre espace aérien. Si leur utilisation légitime ne cesse de croître, ils représentent également des risques potentiels pour la sécurité des infrastructures sensibles, des événements publics et de la vie privée. La détection et l’identification de drones non autorisés constituent un enjeu majeur pour la sécurité.
 Dans ce cadre, une entreprise spécialisée dans la sécurité des sites sensibles a fait appel au CATIE pour développer un système de détection de drones à partir d’images capturées par différents types de caméras
 
-### Enjeux 
-
-
 ### Objectifs 
 
 L'objectif du projet est de détecter un drone à partir d'images et de vidéos capturées par différentes caméras.
 La détection ne doit pas dépendre des conditions ni du format de la prise de vue.
-La priorité est d'éviter à tout prix les drones présents à l'image mais non détectés par le dispositif.
+La priorité est d'éviter à tout prix de ne pas détecter les drones présents sur la vidéo. 
+
+### Technologies envisagées
+**Langage / librairies :** Python avec OpenCV, NumPy, éventuellement SciPy pour certaines manipulations.
+
+**Modèle de détection :** YOLO (pré-entraîné ou fine-tuning).
+
+**Bases de données (optionnel):** Kaggle, Anti-UAV Dataset, Drone Detection Dataset
+
+**Techniques complémentaires :** soustraction de fond / effacement statique pour détecter le mouvement du drone par rapport à l’arrière-plan.
 
 ### Contraintes
 
-- La solution proposée doit être fonctionnelle sur différents types de caméra
-- Le drone doit être reconnaissable dans tout type de configuration et conditions externes
-- Le taux de faux négatif doit être de 0%
-- Le taux de faux positifs sera minimisé
-- La résolution de la caméra  
-- Temps de calcul inférieur au temps de déplacement du drone
-- Qualité de l'image 
-- Fonctionnement sur de multiples caméras
+- Détection fiable des drones en temps réel.
 
-## État des lieux et contexte existant 
+- Taux de faux négatifs = 0%, faux positifs minimisés.
 
-- Bases de données Kaggle 
-- Yolo Python 
+- Fonctionnement sur divers types de caméras et conditions d’éclairage.
+
+- Temps de calcul inférieur au temps de déplacement du drone.
+
+## Verrous technologiques
+
+- **Difficulté de détection dans des conditions réelles**  
+Les performances des modèles de vision diminuent fortement en cas de mouvement de caméra, de faible luminosité, de météo variable ou de drones de petite taille.
+Ces facteurs rendent la reconnaissance instable, notamment lorsque le drone se confond avec le décor ou d’autres objets en mouvement.
+
+- **Absence de suivi temporel**  
+Le modèle YOLO réalise une détection image par image, sans continuité temporelle.
+Cette approche peut provoquer des pertes de détection ponctuelles et nuit à la stabilité du suivi d’objet, essentielle pour une reconnaissance cohérente dans le temps.
+
+- **Absence de classe “drone” dans les modèles existants**  
+Les modèles YOLO pré-entraînés ne comportent pas la classe “drone” dans leurs ensembles de données d’origine.
+Il est donc nécessaire de disposer d’un jeu de données spécifique ou de procéder à un réentraînement partiel afin d’obtenir une détection fiable.
+
+- **Disponibilité et diversité limitées des données vidéo**  
+Les vidéos actuellement disponibles pour le projet ne couvrent qu’un nombre restreint de situations de vol.
+Pour améliorer la robustesse et la généralisation du modèle, il est indispensable de collecter ou rechercher des séquences supplémentaires de drones dans des contextes variés (angles, environnements, conditions lumineuses, tailles, vitesses).
 
 ## Description du projet
 
