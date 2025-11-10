@@ -5,5 +5,5 @@ https://sensors.myu-group.co.jp/sm_pdf/SM2809.pdf?utm_source=chatgpt.com
 https://carmenta.com/knowledge/internship-report-real-time-change-detection-between-drone-video-and-3d-reference-model?utm_source=chatgpt.com
 
 https://docs.ultralytics.com/fr/modes/predict/#working-with-results
-lien kaggle premier entraînement : 
+lien kaggle premier entraînement :
 https://www.kaggle.com/code/marquis03/yolov8-yolo-drone-detection-dataset

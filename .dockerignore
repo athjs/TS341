@@ -1,3 +1,3 @@
 #Deletes all files beside README.md
-*.md 
+*.md
 !README.md
