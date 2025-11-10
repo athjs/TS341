@@ -18,6 +18,10 @@ de caméras
 
 ### Objectifs 
 
+L'objectif du projet est de détecter un drone à partir d'images et de vidéos capturées par différentes caméras.
+La détection ne doit pas dépendre des conditions ni du format de la prise de vue.
+La priorité est d'éviter à tout prix les drones présents à l'image mais non détectés par le dispositif.
+
 ### Contraintes
 
 - La solution proposée doit être fonctionnelle sur différents types de caméra
