@@ -28,11 +28,11 @@ La priorité est d'éviter à tout prix de ne pas détecter les drones présents
 
 - Détection fiable des drones en temps réel.
 
-- Taux de faux négatifs = 0%, faux positifs minimisés.
+- **Taux de faux négatifs = 0%**, faux positifs minimisés.
 
 - Fonctionnement sur divers types de caméras connues à l'avance et conditions d’éclairage.
 
-- Rapidité de détection cohérente avec la vitesse du drône.
+- Rapidité de détection cohérente avec la vitesse du drone.
 
 ## Verrous technologiques
 
@@ -42,7 +42,7 @@ Ces facteurs rendent la reconnaissance instable, notamment lorsque le drone se c
 
 - **Absence de suivi temporel**
 Le modèle YOLO réalise une détection image par image, sans continuité temporelle.
-Cette approche peut provoquer des pertes de détection ponctuelles et nuit à la stabilité du suivi d’objet, essentielle pour une reconnaissance cohérente dans le temps. Il va falloir implémenter un suivi de tracking.
+Cette approche peut provoquer des pertes de détection ponctuelles et nuit à la stabilité du suivi d’objet, essentielle pour une reconnaissance cohérente dans le temps.  Il est donc nécessaire d'implémenter un modèle de tracking.
 
 - **Absence de classe “drone” dans les modèles existants**
 Les modèles YOLO pré-entraînés ne comportent pas la classe “drone” dans leurs ensembles de données d’origine.
