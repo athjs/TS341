@@ -6,10 +6,9 @@ RUN poetry install
 COPY ./ts341_project/ app/
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-    vim \
     python3 \
     curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-COPY --from=builder /app/dist /usr/share/
+# COPY --from=builder /app/dist /usr/share/
 CMD ["poetry", "run", "python", "ts341_example/app.py"]

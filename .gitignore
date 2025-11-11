@@ -25,6 +25,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+ts341_project/yolo_training/drone_dataset/train/*
 MANIFEST
 
 # PyInstaller
