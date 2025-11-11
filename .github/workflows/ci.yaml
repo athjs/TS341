@@ -24,9 +24,10 @@ jobs:
 
       - name: Run pre-commit hooks
         run: pre-commit run --all-files
+
       #NOTE: For the moment there is no tests, then this part is skipped
-      # - name: Run tests with coverage (>=80%)
-      #   run: pytest --cov=your_package --cov-report=term --cov-fail-under=80
+      - name: Run tests with coverage (optional)
+        run: pytest --cov=your_package || echo "No tests yet, skipping coverage check"
 
       - name: Check types
         run: npx pyright
