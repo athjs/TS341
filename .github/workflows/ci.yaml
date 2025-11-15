@@ -31,3 +31,5 @@ jobs:
       #NOTES: For the moment there is no types, to prevent CI failures
       - name: Check types
         run: poetry run pyright || echo "No typing yet, comming soon"
+      - name: Check types (optional)
+        run: poetry run pyright || echo "No typing yet, comming soon"
