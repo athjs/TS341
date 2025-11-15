@@ -45,11 +45,11 @@ Le modèle YOLO réalise une détection image par image, sans continuité tempor
 Cette approche peut provoquer des pertes de détection ponctuelles et nuit à la stabilité du suivi d’objet, essentielle pour une reconnaissance cohérente dans le temps.  Il est donc nécessaire d'implémenter un modèle de tracking.
 
 - **Traitement en temps réel**
-Avec le matériel à disposition, il est difficilement envisageable de faire du traitement en temps réel. Nous essayerons néanmoins de faire une estimation de la puissance GPU nécessaire pour que ce soit le cas. 
+Avec le matériel à disposition, il est difficilement envisageable de faire du traitement en temps réel. Nous essayerons néanmoins de faire une estimation de la puissance GPU nécessaire pour que ce soit le cas.
 
 - **Disponibilité et diversité limitées des données vidéo**
 Les vidéos actuellement disponibles pour le projet ne couvrent qu’un nombre restreint de situations de vol.
-Pour améliorer la robustesse et la généralisation du modèle, il est préferable de collecter ou rechercher des séquences supplémentaires de drones dans des contextes variés (angles, environnements, conditions lumineuses, tailles, vitesses). Si une base de données de vidéo plus large avait été mise à disposition, l'entraînement aurait été plus spécifique et plus efficace. 
+Pour améliorer la robustesse et la généralisation du modèle, il est préferable de collecter ou rechercher des séquences supplémentaires de drones dans des contextes variés (angles, environnements, conditions lumineuses, tailles, vitesses). Si une base de données de vidéo plus large avait été mise à disposition, l'entraînement aurait été plus spécifique et plus efficace.
 
 ## Description du projet
 
@@ -68,6 +68,6 @@ Nous expérimenterons également plusieurs approches de perfectionnement :
 
 - un algorithme simple de soustraction de fond permettra d’identifier les zones en mouvement dans la scène ;
 - un tracking pour améliorer la cohérence du suivi ;
-- un entraînement de YOLO sur un dataset spécifique au drone utilisé. 
+- un entraînement de YOLO sur un dataset spécifique au drone utilisé.
 
 L’objectif du prototype est donc d’obtenir une première preuve de concept démontrant la détection de drones dans un contexte simplifié, ouvrant la voie à un développement plus robuste et en temps réel.
