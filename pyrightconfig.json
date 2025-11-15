@@ -1,0 +1,5 @@
+{
+  "ignore": ["ultralytics"],
+  "reportMissingImports": false,
+  "reportPrivateImportUsage": "none"
+}

@@ -11,7 +11,12 @@ authors = [
     { name = "Mathis Pereira Pedro", email = "mpereiraped@bordeaux-inp.fr" },
 ]
 
-dependencies = ["opencv-python >=4", "flask >= 3.1.2", "ruff >= 0.14.4"]
+dependencies = [
+    "opencv-python >=4",
+    "flask >= 3.1.2",
+    "ruff >= 0.14.4",
+    "ultralytics (>=8.3.228,<9.0.0)",
+]
 
 requires-python = ">=3.13"
 
