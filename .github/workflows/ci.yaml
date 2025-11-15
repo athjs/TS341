@@ -29,5 +29,5 @@ jobs:
       - name: Run tests with coverage (optional)
         run: pytest --cov=your_package || echo "No tests yet, skipping coverage check"
       #NOTES: For the moment there is no types, to prevent CI failures
-      - name: Check types
+      - name: Check types (optional)
         run: npx pyright || echo "No typing yet, comming soon"
