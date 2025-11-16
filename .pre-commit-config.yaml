@@ -3,7 +3,7 @@ repos:
     rev: v0.6.2
     hooks:
       - id: ruff
-        args: ["--fix", "--exit-zero"]
+        args: ["check", "--select", "D", "--ignore", "D104"]
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
