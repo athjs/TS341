@@ -3,9 +3,11 @@ import utils
 
 
 def removeBackground(path: str) -> cv.VideoCapture:
-    """Open the video and remove background
+    """Open the video and remove background.
+
     Return the video without background
-    only with moving objects"""
+    only with moving objects
+    """
     cap: cv.VideoCapture = utils.openvideo(path)
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (3, 3))
     fgbg = cv.createBackgroundSubtractorMOG2()
