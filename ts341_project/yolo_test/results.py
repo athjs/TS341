@@ -1,3 +1,5 @@
+"""Module for running YOLO detection on videos."""
+
 from ultralytics import YOLO
 
 # Charger un modèle pré-entraîné (par ex. COCO)
