@@ -2,6 +2,8 @@
 # blender_scene_render.py
 # Script compatible Blender 2.80+
 # Crée une scène simple (sol + objet), matériaux, lumière, caméra, et effectue un rendu PNG.
+# A executer avec la commande suivante :
+# blender --background --python ts341_project/dataset_create_from_file.py
 
 import bpy
 import os
@@ -82,17 +84,17 @@ def move_scene(drone_obj, borne_dist, theta_bornes):
 
 def give_output(n, drone_obj, theta_bornes):
     """Génère et sauvegarde n images de la scène avec des positions aléatoires."""
-    for i in range(5):
+    for i in range(n):
         print("Rendering image", i + 1, "/", n)
         move_scene(drone_obj, (20, 100), theta_bornes)
-        render_and_save(f"dataset/image_{i:03d}.png")
+        render_and_save(f"ts341_project/model_training/sim2real_approach/dataset/image_{i:03d}.png")
 
 
 def main():
     """Point d'entrée principal."""
-    bpy.ops.wm.open_mainfile(filepath="base.blend")
+    bpy.ops.wm.open_mainfile(filepath="ts341_project/model_training/sim2real_approach/base.blend")
     drone = bpy.data.objects.get("model")
-    give_output(5, drone, (0, 0))
+    give_output(200, drone, (0, 0))
 
     # bpy.ops.preferences.addon_enable(module='bl_ext.blender_org.stl_format_legacy')
 
