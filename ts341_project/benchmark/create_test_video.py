@@ -2,35 +2,40 @@
 
 import cv2
 import csv
+import numpy as np
+from typing import Optional
 
 # --- paramètres ---
-video_path = "videos/capture_cloudy-daylight_True_10_03_14_35_15_cam1.mp4"
-output_csv = "ts341_project/test_results.csv"
+video_path: str = "videos/capture_cloudy-daylight_True_10_03_14_35_15_cam1.mp4"
+output_csv: str = "ts341_project/test_results.csv"
 
 # --- CSV ---
-scale = 0.5  # ← fenêtre 50% de la taille originale
+scale: float = 0.5  # ← fenêtre 50% de la taille originale
 
 csv_file = open(output_csv, "w", newline="")
 writer = csv.writer(csv_file)
 writer.writerow(["frame", "x", "y"])
 
-cap = cv2.VideoCapture(video_path)
+cap: cv2.VideoCapture = cv2.VideoCapture(video_path)
 
-frame_id = 0
-clicked = False
-click_x, click_y = None, None
+frame_id: int = 0
+click_x: Optional[int] = None
+click_y: Optional[int] = None
+frame_clicked: bool = False  # drapeau local pour chaque frame
 
-def mouse_callback(event, x, y, flags, param):
+def mouse_callback(event: int, x: int, y: int, flags: int, param: Optional[object]) -> None:
     """Récupère le click de la souris sur l'image.
 
     Args:
+        event (int): type d'événement OpenCV
         x (int): x du pixel cliqué
         y (int): y du pixel cliqué
+        flags (int): flags OpenCV
+        param (object | None): paramètre supplémentaire
     """
-    global clicked, click_x, click_y, scale
+    global click_x, click_y, frame_clicked, scale
     if event == cv2.EVENT_LBUTTONDOWN:
-        clicked = True
-        # conversion vers coordonnées réelles
+        frame_clicked = True
         click_x = int(x / scale)
         click_y = int(y / scale)
 
@@ -38,25 +43,27 @@ cv2.namedWindow("Annotation")
 cv2.setMouseCallback("Annotation", mouse_callback)
 
 while True:
+    ret: bool
+    frame: Optional[np.ndarray]
     ret, frame = cap.read()
-    if not ret:
+    if not ret or frame is None:
         break
 
-    clicked = False
+    frame_clicked = False  # reset pour chaque frame
 
     # redimension pour affichage
-    display = cv2.resize(frame, None, fx=scale, fy=scale)
+    display: np.ndarray = cv2.resize(frame, None, fx=scale, fy=scale)
 
     while True:
         cv2.putText(display,
                     f"Frame {frame_id} - clic=pos | d=no det | n=skip | q=quit",
-                    (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,255,0), 2)
+                    (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
         cv2.imshow("Annotation", display)
-        key = cv2.waitKey(10)
+        key: int = cv2.waitKey(10)
 
         # clic sur la version réduite
-        if clicked:
+        if frame_clicked and click_x is not None and click_y is not None:
             # point affiché seulement sur la version réduite
             cv2.circle(display,
                        (int(click_x * scale), int(click_y * scale)),
