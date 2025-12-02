@@ -1,3 +1,5 @@
+"""Evaluation d'un modele par rapport à la métric faite main."""
+
 import csv
 import numpy as np
 from numpy.typing import NDArray
@@ -59,6 +61,7 @@ def confusion_matrix_score(
         yReel: coordonnée Y réelle du drone (attendue).
         xPred: coordonnée X prédite par le modèle.
         yPred: coordonnée Y prédite par le modèle.
+        seuil_tolerance: tolérance pour considérer la prédiction comme fausse
 
     Returns:
         index of [PP, PN, NP, NN] premier étant réel, deuxieme étant prédi

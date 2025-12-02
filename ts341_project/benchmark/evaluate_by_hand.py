@@ -1,3 +1,4 @@
+"""Permet d'annoté les images à la main pour faire la métrique."""
 # Code généré avec l'aide de ChatGPT
 
 import cv2

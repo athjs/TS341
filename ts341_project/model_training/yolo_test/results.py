@@ -1,3 +1,5 @@
+"""Fais une prédiction sur une image par un modele."""
+
 from ultralytics import YOLO
 from typing import Any
 

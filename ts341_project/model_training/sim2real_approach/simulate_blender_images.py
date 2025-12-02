@@ -89,7 +89,6 @@ def give_output(
     n: int, drone_obj: bpy.types.Object, theta_bornes: Tuple[float, float]
 ) -> None:
     """Génère et sauvegarde n images de la scène avec des positions aléatoires."""
-
     for i in range(n):
         print("Rendering image", i + 1, "/", n)
         label: list[float] = move_scene(drone_obj, (20, 100), theta_bornes)

@@ -1,3 +1,4 @@
+"""Permet de tester la labélisation automatique de la simulation blender."""
 # FONCTION GENEREE AVEC CHATGPT EN GRANDE PARTIE
 
 import cv2
@@ -7,8 +8,10 @@ from pathlib import Path
 
 def afficher_image_labels(dataset_path, image_name):
     """Affichage de chaque image pour vérifier la validité de la labélisation du fichier "simulate_blender_images.py".
-    dataset_path : chemin vers le dataset contenant 'images/' et 'labels/'
-    image_name   : nom du fichier image (ex: 'img1.jpg')
+
+    Args :
+        dataset_path : chemin vers le dataset contenant 'images/' et 'labels/'
+        image_name : nom du fichier image (ex: 'img1.jpg')
     """
     dataset_path = Path(dataset_path)
     image_path = dataset_path / "images" / image_name
