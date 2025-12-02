@@ -8,17 +8,23 @@ from typing import List
 import shutil
 from pathlib import Path
 
-def update_labels(source_path, destination_path):
+def update_label(source_path, destination_path, label_name):
+    """
+    Copie le label de source_path vers destination_path.
+    """
     dossier_source = Path(source_path)
     dossier_destination = Path(destination_path)
 
-    # Copier tout le contenu et écraser si nécessaire
-    for item in dossier_source.iterdir():
-        dest = dossier_destination / item.name
-        if item.is_dir():
-            shutil.copytree(item, dest, dirs_exist_ok=True)
-        else:
-            shutil.copy2(item, dest)
+    item = dossier_source / label_name
+    if not item.exists():
+        print(f"Erreur : '{label_name}' n'existe pas dans le dossier source.")
+        return
+
+    dest = dossier_destination / item.name
+    if item.is_dir():
+        shutil.copytree(item, dest, dirs_exist_ok=True)
+    else:
+        shutil.copy2(item, dest)
 
 
 
@@ -74,7 +80,7 @@ def replace_with_color_BG(image: np.ndarray) -> np.ndarray:
 
 def __main__() -> None:
     """Point d'entrée principal."""
-    n_images: int = 5
+    n_images: int = 200
     n_BG: int = 103
 
     images: List[np.ndarray] = import_images(n_images)
@@ -91,13 +97,16 @@ def __main__() -> None:
         image_with_nature_BG:  np.ndarray = replace_with_nature_BG(images[i], BG_images)
         img: Image.Image  = Image.fromarray(image_with_nature_BG)
         img.save(f"ts341_project/model_training/sim2real_approach/final_nature_dataset/{end_path}/images/image_{i:03d}.jpg")
-        update_labels("ts341_project/model_training/sim2real_approach/dataset/labels", f"ts341_project/model_training/sim2real_approach/final_nature_dataset/{end_path}/labels")
+        update_label(f"ts341_project/model_training/sim2real_approach/dataset/labels", f"ts341_project/model_training/sim2real_approach/final_nature_dataset/{end_path}/labels", f"image_{i:03d}.txt")
+
 
         # Color BG
         image_with_color_BG = replace_with_color_BG(images[i])
         img = Image.fromarray(image_with_color_BG)
         img.save(f"ts341_project/model_training/sim2real_approach/final_color_dataset/{end_path}/images/image_{i:03d}.jpg")
-        update_labels("ts341_project/model_training/sim2real_approach/dataset/labels", f"ts341_project/model_training/sim2real_approach/final_color_dataset/{end_path}/labels")
+        update_label("ts341_project/model_training/sim2real_approach/dataset/labels", f"ts341_project/model_training/sim2real_approach/final_color_dataset/{end_path}/labels",f"image_{i:03d}.txt")
+
+
 
 
 __main__()

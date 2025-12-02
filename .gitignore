@@ -217,6 +217,11 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# fichier photos
+*.png
+*.jpg
+*.txt
+
 # Vidéos & images
 ts341_project/model_training/sim2real_approach/nature_BG_dataset/*
 videos/
