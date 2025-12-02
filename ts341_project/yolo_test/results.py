@@ -14,7 +14,7 @@ def run_yolo(video_path=os.path.join(CURRENT_DIR, "capture_cloudy-daylight_True_
         frame = result.plot()
         frame_resized = cv2.resize(frame, (1280, 720))  
 
-        cv2.imshow("Resultat YOLO", frame_resized)
+        # cv2.imshow("Resultat YOLO", frame_resized)
 
         # Récupérer les coordonnées et infos
         detections = result.boxes.xyxy.cpu().numpy()  
@@ -22,7 +22,7 @@ def run_yolo(video_path=os.path.join(CURRENT_DIR, "capture_cloudy-daylight_True_
         class_ids = result.boxes.cls.cpu().numpy()  
 
         # On renvoie le tout **pour chaque frame**
-        yield detections, confidences, class_ids
+        yield frame_resized, detections, confidences, class_ids
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
