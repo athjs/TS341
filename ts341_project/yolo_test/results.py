@@ -4,7 +4,10 @@ from ultralytics import YOLO
 from typing import Any
 
 # Charger un modèle pré-entraîné (par ex. COCO)
-model: YOLO = YOLO("ts341_project/yolo_test/kaggle_training.pt")  # tu peux utiliser yolov8s.pt, yolov8m.pt, etc.
+model: YOLO = YOLO(
+    "ts341_project/yolo_test/kaggle_training.pt"
+)  # tu peux utiliser yolov8s.pt, yolov8m.pt, etc.
+
 
 def yolo_predict(image_path: str) -> Any:
     """Effectue la prédiction YOLO sur une image donnée.
