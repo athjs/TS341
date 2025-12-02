@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "A Python package for TS341"
 readme = "README.md"
 
+#FIX: Mettez vos adresses mails svp la team.
 authors = [
     { name = "Amandine", email = "amandine.email@bordeaux-inp.fr" },
     { name = "Anthony", email = "anthony.email@bordeaux-inp.fr" },
@@ -43,3 +44,12 @@ select = ["D"]
 ignore = ["D417"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+#Pour pyright
+[tool.pyright]
+ignore = ["ultralytics"]
+typeCheckingMode = "basic"
+reportMissingTypeHints = "warning"
+reportUnknownVariableType = "warning"
+reportMissingImports = false
+reportUnknownMemberType = "warning"

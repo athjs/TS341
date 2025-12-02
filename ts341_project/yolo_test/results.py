@@ -1,4 +1,6 @@
-from ultralytics import YOLO
+"""Importing YOLO for learning."""
+
+from ultralitics import YOLO
 
 # Charger un modèle pré-entraîné (par ex. COCO)
 model = YOLO("kaggle_training.pt")  # tu peux utiliser yolov8s.pt, yolov8m.pt, etc.

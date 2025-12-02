@@ -2,7 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+    - '**'
   pull_request:
     branches: [main]
 
@@ -30,4 +31,4 @@ jobs:
         run: poetry run pytest --cov=your_package || echo "No tests yet"
 
       - name: Type check
-        run: poetry run pyright || echo "No typing yet"
+        run: poetry run pyright
