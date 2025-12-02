@@ -10,17 +10,18 @@ import os
 import mathutils
 import math
 import random
+from typing import Tuple
 
 # ---------- Config ----------
-RENDER_ENGINE = "CYCLES"  # 'CYCLES' ou 'BLENDER_EEVEE'
-RESOLUTION_X = 1920
-RESOLUTION_Y = 1080
-SAMPLES = 64  # pour Cycles
-USE_DENOISING = True
+RENDER_ENGINE: str = "CYCLES"  # 'CYCLES' ou 'BLENDER_EEVEE'
+RESOLUTION_X: int = 1920
+RESOLUTION_Y: int = 1080
+SAMPLES: int = 64  # pour Cycles
+USE_DENOISING: bool = True
 # ----------------------------
 
 
-def render_and_save(filepath):
+def render_and_save(filepath: str) -> None:
     """Configure le moteur de rendu et lance le rendu."""
     # assure le dossier existe
     folder = os.path.dirname(filepath)
@@ -32,51 +33,47 @@ def render_and_save(filepath):
     bpy.ops.render.render(write_still=True)  # blocking call
 
 
-def drone_space_to_camera_space(camera_obj, FOV, borne_dist):
+def drone_space_to_camera_space(camera_obj: bpy.types.Object, FOV: float, borne_dist: Tuple[float, float]) -> mathutils.Vector:
     """Convertit une position aléatoire dans l'espace drone en position dans l'espace monde."""
-    ratio = 1080 / 1920  # hauteur / largeur
+    ratio: float = RESOLUTION_Y / RESOLUTION_X
     # Point dans l'espace caméra
-    FOV_X = math.radians(34)
-    FOV_Y = math.atan(math.tan(FOV_X / 2) * ratio) * 2
+    FOV_X: float = math.radians(34)
+    FOV_Y: float = math.atan(math.tan(FOV_X / 2) * ratio) * 2
 
-    pente_x = math.tan(FOV_X / 2)
-    pente_y = math.tan(FOV_Y / 2)
+    pente_x: float = math.tan(FOV_X / 2)
+    pente_y: float = math.tan(FOV_Y / 2)
     print(pente_x, pente_y)
 
-    alea_x = random.uniform(-1, 1)
-    alea_y = random.uniform(-1, 1)
-    x_pixel = (alea_x + 1) * 0.5 * 1920
-    y_pixel = (alea_y + 1) * 0.5 * 1080
+    alea_x: float = random.uniform(-1, 1)
+    alea_y: float = random.uniform(-1, 1)
+    x_pixel: float = (alea_x + 1) * 0.5 * RESOLUTION_X
+    y_pixel: float = (alea_y + 1) * 0.5 * RESOLUTION_Y
 
-
-    alea_z = random.uniform(borne_dist[0], borne_dist[1])
-    alea_x_space = alea_x * pente_x * alea_z
-    alea_y_space = alea_y * pente_y * alea_z
-    target_point = mathutils.Vector(
+    alea_z: float = random.uniform(borne_dist[0], borne_dist[1])
+    alea_x_space: float = alea_x * pente_x * alea_z
+    alea_y_space: float = alea_y * pente_y * alea_z
+    target_point: mathutils.Vector = mathutils.Vector(
         (alea_x_space, alea_y_space, -alea_z)
     )  # Z négatif = devant la caméra
 
     # Conversion espace caméra → espace monde
-    point_world = camera_obj.matrix_world @ target_point
+    point_world: mathutils.Vector = camera_obj.matrix_world @ target_point
 
     return point_world
 
 
-def move_scene(drone_obj, borne_dist, theta_bornes):
-    """Déplace la scène (drone + caméra) à une nouvelle position aléatoire dans la zone visible du drone."""
-    # RAJOUTER LE FOV
+def move_scene(drone_obj: bpy.types.Object, borne_dist: Tuple[float, float], theta_bornes: Tuple[float, float]) -> None:
+    """Déplace la scène (drone + caméra) à une nouvelle position aléatoire."""
+    # RAJOUTER LE POV
 
-    # D'abord theta pour l'angle de la caméra
-    alea_theta = random.uniform(theta_bornes[0], theta_bornes[1])
-    camera_obj = bpy.data.objects["Camera"]
+    alea_theta: float = random.uniform(theta_bornes[0], theta_bornes[1])
+    camera_obj: bpy.types.Object = bpy.data.objects["Camera"]
     camera_obj.rotation_euler = (math.radians(90 + alea_theta), 0, 0)
-    work_obj_coos = drone_space_to_camera_space(
-        camera_obj, math.radians(60), borne_dist
-    )
+    work_obj_coos: mathutils.Vector = drone_space_to_camera_space(camera_obj, math.radians(60), borne_dist)
     drone_obj.location = work_obj_coos
 
 
-def give_output(n, drone_obj, theta_bornes):
+def give_output(n: int, drone_obj: bpy.types.Object, theta_bornes: Tuple[float, float]) -> None:
     """Génère et sauvegarde n images de la scène avec des positions aléatoires."""
     for i in range(n):
         print("Rendering image", i + 1, "/", n)
@@ -84,18 +81,20 @@ def give_output(n, drone_obj, theta_bornes):
         render_and_save(f"ts341_project/model_training/sim2real_approach/dataset/images/image_{i:03d}.png")
 
 
-def main():
+def main() -> None:
     """Point d'entrée principal."""
     bpy.ops.wm.open_mainfile(filepath="ts341_project/model_training/sim2real_approach/base.blend")
-    drone = bpy.data.objects.get("model")
+    drone: bpy.types.Object = bpy.data.objects.get("model")
+    if drone is None:
+        raise ValueError("L'objet 'model' n'existe pas dans la scène Blender.")
     give_output(200, drone, (0, 0))
+
+    print("Done.")
 
     # bpy.ops.preferences.addon_enable(module='bl_ext.blender_org.stl_format_legacy')
 
     """if bpy.context.scene.render.engine == 'BLENDER_EEVEE':
         bpy.context.scene.eevee.use_gtao = True """
-
-    print("Done.")
 
 
 if __name__ == "__main__":
