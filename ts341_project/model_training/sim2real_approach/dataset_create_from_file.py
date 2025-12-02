@@ -43,24 +43,18 @@ def drone_space_to_camera_space(camera_obj, FOV, borne_dist):
     pente_y = math.tan(FOV_Y / 2)
     print(pente_x, pente_y)
 
+    alea_x = random.uniform(-1, 1)
+    alea_y = random.uniform(-1, 1)
+    x_pixel = (alea_x + 1) * 0.5 * 1920
+    y_pixel = (alea_y + 1) * 0.5 * 1080
+
+
     alea_z = random.uniform(borne_dist[0], borne_dist[1])
-    alea_x = random.uniform(-1, 1) * pente_x * alea_z
-    alea_y = random.uniform(-1, 1) * pente_y * alea_z
+    alea_x_space = alea_x * pente_x * alea_z
+    alea_y_space = alea_y * pente_y * alea_z
     target_point = mathutils.Vector(
-        (alea_x, alea_y, -alea_z)
+        (alea_x_space, alea_y_space, -alea_z)
     )  # Z négatif = devant la caméra
-    print(
-        "Pente_x:",
-        pente_x,
-        "Pente_y:",
-        pente_y,
-        "x:",
-        alea_x,
-        "y:",
-        alea_y,
-        "z:",
-        alea_z,
-    )
 
     # Conversion espace caméra → espace monde
     point_world = camera_obj.matrix_world @ target_point
@@ -87,7 +81,7 @@ def give_output(n, drone_obj, theta_bornes):
     for i in range(n):
         print("Rendering image", i + 1, "/", n)
         move_scene(drone_obj, (20, 100), theta_bornes)
-        render_and_save(f"ts341_project/model_training/sim2real_approach/dataset/image_{i:03d}.png")
+        render_and_save(f"ts341_project/model_training/sim2real_approach/dataset/images/image_{i:03d}.png")
 
 
 def main():

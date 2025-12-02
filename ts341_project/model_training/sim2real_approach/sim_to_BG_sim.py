@@ -7,7 +7,19 @@ import random
 
 def import_images(n_images):
     """Importe n images depuis le dossier dataset/ et les redimensionne en 1920x1080."""
-    image_path = "ts341_project/model_training/sim2real_approach/dataset/"
+    image_path = "ts341_project/model_training/sim2real_approach/dataset/image"
+
+    images = []
+    for i in range(n_images):
+        img = Image.open(f"{image_path}image_{i:03d}.png")
+        img = img.resize((1920, 1080))
+        images.append(np.array(img))
+
+    return images
+
+def import_labels(n_images):
+    """Importe n labels depuis le dossier dataset/ et les redimensionne en 1920x1080."""
+    image_path = "ts341_project/model_training/sim2real_approach/dataset/labels"
 
     images = []
     for i in range(n_images):
