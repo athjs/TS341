@@ -5,31 +5,36 @@ import PIL.Image as Image
 import random
 from typing import List
 
-def import_images(n_images: int) -> List[np.ndarray]:
+import shutil
+from pathlib import Path
+
+def update_labels(source_path, destination_path):
+    dossier_source = Path(source_path)
+    dossier_destination = Path(destination_path)
+
+    # Copier tout le contenu et écraser si nécessaire
+    for item in dossier_source.iterdir():
+        dest = dossier_destination / item.name
+        if item.is_dir():
+            shutil.copytree(item, dest, dirs_exist_ok=True)
+        else:
+            shutil.copy2(item, dest)
+
+
+
+def import_images(n_images):
     """Importe n images depuis le dossier dataset/ et les redimensionne en 1920x1080."""
-    image_path: str = "ts341_project/model_training/sim2real_approach/dataset/image"
+    image_path = "ts341_project/model_training/sim2real_approach/dataset/images"
 
     images: List[np.ndarray] = []
     for i in range(n_images):
-        img: Image.Image = Image.open(f"{image_path}image_{i:03d}.png")
+        img: Image.Image = Image.open(f"{image_path}/image_{i:03d}.png")
         img = img.resize((1920, 1080))
         images.append(np.array(img))
 
     return images
 
-def import_labels(n_images: int) -> List[np.ndarray]:
-    """Importe n labels depuis le dossier dataset/ et les redimensionne en 1920x1080."""
-    image_path: str = "ts341_project/model_training/sim2real_approach/dataset/labels"
-
-    images: List[np.ndarray] = []
-    for i in range(n_images):
-        img: Image.Image = Image.open(f"{image_path}image_{i:03d}.png")
-        img = img.resize((1920, 1080))
-        images.append(np.array(img))
-
-    return images
-
-def RGBA_to_RGB(image: np.ndarray) -> np.ndarray:
+def RGBA_to_RGB(image) -> np.ndarray :
     """Convertit une image RGBA en RGB en supprimant le canal alpha."""
     return image[:, :, :3]
 
@@ -78,17 +83,21 @@ def __main__() -> None:
     for i in range(n_images):
         end_path: str
         if i < (0.80 * n_images):
-            end_path = "train/images/"
-        else:
-            end_path = "valid/images/"
+            end_path = "train"
+        else :
+            end_path = "valid"
 
-        image_with_nature_BG: np.ndarray = replace_with_nature_BG(images[i], BG_images)
-        img: Image.Image = Image.fromarray(image_with_nature_BG)
-        img.save(f"ts341_project/model_training/sim2real_approach/final_nature_dataset/{end_path}{i}.jpg")
+        # Nature BG
+        image_with_nature_BG:  np.ndarray = replace_with_nature_BG(images[i], BG_images)
+        img: Image.Image  = Image.fromarray(image_with_nature_BG)
+        img.save(f"ts341_project/model_training/sim2real_approach/final_nature_dataset/{end_path}/images/image_{i:03d}.jpg")
+        update_labels("ts341_project/model_training/sim2real_approach/dataset/labels", f"ts341_project/model_training/sim2real_approach/final_nature_dataset/{end_path}/labels")
 
-        image_with_color_BG: np.ndarray = replace_with_color_BG(images[i])
+        # Color BG
+        image_with_color_BG = replace_with_color_BG(images[i])
         img = Image.fromarray(image_with_color_BG)
-        img.save(f"ts341_project/model_training/sim2real_approach/final_color_dataset/{end_path}{i}.jpg")
+        img.save(f"ts341_project/model_training/sim2real_approach/final_color_dataset/{end_path}/images/image_{i:03d}.jpg")
+        update_labels("ts341_project/model_training/sim2real_approach/dataset/labels", f"ts341_project/model_training/sim2real_approach/final_color_dataset/{end_path}/labels")
 
 
 __main__()

@@ -46,39 +46,55 @@ def drone_space_to_camera_space(camera_obj: bpy.types.Object, FOV: float, borne_
 
     alea_x: float = random.uniform(-1, 1)
     alea_y: float = random.uniform(-1, 1)
-    x_pixel: float = (alea_x + 1) * 0.5 * RESOLUTION_X
-    y_pixel: float = (alea_y + 1) * 0.5 * RESOLUTION_Y
+    x_pixel: float = (alea_x + 1) * 0.5 
+    y_pixel: float = 1 - (alea_y + 1) * 0.5 
 
     alea_z: float = random.uniform(borne_dist[0], borne_dist[1])
     alea_x_space: float = alea_x * pente_x * alea_z
     alea_y_space: float = alea_y * pente_y * alea_z
-    target_point: mathutils.Vector = mathutils.Vector(
+    target_point: float = mathutils.Vector(
         (alea_x_space, alea_y_space, -alea_z)
     )  # Z négatif = devant la caméra
 
     # Conversion espace caméra → espace monde
     point_world: mathutils.Vector = camera_obj.matrix_world @ target_point
 
-    return point_world
+    scale_factor: float = (borne_dist[1] - alea_z)/borne_dist[1]
+    width: float= 0.2* scale_factor
+    height: float = 0.2* scale_factor
+    return (point_world, (x_pixel, y_pixel, width, height))
 
 
-def move_scene(drone_obj: bpy.types.Object, borne_dist: Tuple[float, float], theta_bornes: Tuple[float, float]) -> None:
+def move_scene(drone_obj: bpy.types.Object, borne_dist: Tuple[float, float], theta_bornes: Tuple[float, float]) -> list:
     """Déplace la scène (drone + caméra) à une nouvelle position aléatoire."""
     # RAJOUTER LE POV
 
     alea_theta: float = random.uniform(theta_bornes[0], theta_bornes[1])
     camera_obj: bpy.types.Object = bpy.data.objects["Camera"]
     camera_obj.rotation_euler = (math.radians(90 + alea_theta), 0, 0)
-    work_obj_coos: mathutils.Vector = drone_space_to_camera_space(camera_obj, math.radians(60), borne_dist)
+    move_infos = drone_space_to_camera_space(
+        camera_obj, math.radians(60), borne_dist
+    )
+    work_obj_coos = move_infos[0]
     drone_obj.location = work_obj_coos
+
+    return move_infos[1]
 
 
 def give_output(n: int, drone_obj: bpy.types.Object, theta_bornes: Tuple[float, float]) -> None:
     """Génère et sauvegarde n images de la scène avec des positions aléatoires."""
+    
     for i in range(n):
         print("Rendering image", i + 1, "/", n)
-        move_scene(drone_obj, (20, 100), theta_bornes)
+        label: list[float] = move_scene(drone_obj, (20, 100), theta_bornes)
+
+        # On export l'image
         render_and_save(f"ts341_project/model_training/sim2real_approach/dataset/images/image_{i:03d}.png")
+
+        # On export le label correspondant
+        with open(f"ts341_project/model_training/sim2real_approach/dataset/labels/image_{i:03d}.txt", "w") as f :
+            f.write(f"0 {label[0]} {label[1]} {label[2]} {label[3]}")
+        
 
 
 def main() -> None:
