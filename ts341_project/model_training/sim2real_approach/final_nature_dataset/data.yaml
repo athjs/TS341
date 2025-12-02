@@ -1,0 +1,6 @@
+names:
+- nature
+nc: 1
+path: /final_nature_dataset/
+train: /final_nature_dataset/train
+val: /final_nature_dataset/valid

@@ -1,0 +1,6 @@
+names:
+- color
+nc: 1
+path: /final_color_dataset/
+train: /final_color_dataset/train
+val: /final_color_dataset/valid

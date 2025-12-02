@@ -67,11 +67,15 @@ def __main__():
     BG_images = import_BG(n_BG)
 
     for i in range(n_images):
+        if i < (0.80 * n_images):
+            end_path = "train/images/"
+        else :
+            end_path = "valid/images/"
         image_with_nature_BG = replace_with_nature_BG(images[i], BG_images)
         img = Image.fromarray(image_with_nature_BG)
-        img.save(f"ts341_project/model_training/sim2real_approach/final_nature_dataset/{i}.jpg")
+        img.save(f"ts341_project/model_training/sim2real_approach/final_nature_dataset/{end_path}{i}.jpg")
         image_with_color_BG = replace_with_color_BG(images[i])
         img = Image.fromarray(image_with_color_BG)
-        img.save(f"ts341_project/model_training/sim2real_approach/final_color_dataset/{i}.jpg")
+        img.save(f"ts341_project/model_training/sim2real_approach/final_color_dataset/{end_path}{i}.jpg")
 
 __main__()
