@@ -1,6 +1,6 @@
 """Fais une prédiction sur une image par un modele."""
 
-from ultralytics import YOLO
+from ultralytics.yolo import YOLO
 from typing import Any
 
 # Charger un modèle pré-entraîné (par ex. COCO)
