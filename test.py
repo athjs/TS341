@@ -64,7 +64,7 @@ def afficher_image_labels(dataset_path, image_name):
     plt.show()
 
 
-for i in range(5):
+for i in range(9, 15):
     afficher_image_labels(
         "ts341_project/model_training/sim2real_approach/dataset", f"image_{i:03d}.png"
     )
