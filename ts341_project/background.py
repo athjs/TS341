@@ -12,6 +12,7 @@ sys.path.append(VIDEO_PATH)
 
 display_q = Queue(maxsize=1)
 
+
 def display_loop():
     while True:
         item = display_q.get()
@@ -21,6 +22,7 @@ def display_loop():
         cv.imshow("Frame", frame)
         if cv.waitKey(1) & 0xFF == ord("q"):
             return
+
 
 def frame_generator(cap, fgbg, kernel):
     while True:
@@ -38,11 +40,12 @@ def frame_generator(cap, fgbg, kernel):
 
         yield frame_id, centroids, frame
 
+
 def get_movings(video_name="video2_short"):
     video_path = os.path.join(VIDEO_PATH, video_name)
     cap = u.openvideo(video_path)
     fgbg = cv.createBackgroundSubtractorMOG2()
-    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (3,3))
+    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (3, 3))
     # t = Thread(target=display_loop, daemon=True)
     # t.start()
 
@@ -83,6 +86,7 @@ def get_moving_centroïds(contours: list[np.ndarray]) -> list[tuple[int, int]]:
             cy = int(M["m01"] / M["m00"])
             centroids.append((cx, cy))
     return centroids
+
 
 # get_movings()
 # remove_background("videos/video3")

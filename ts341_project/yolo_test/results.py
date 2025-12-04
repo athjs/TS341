@@ -8,12 +8,13 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 VIDEO_PATH = os.path.join(CURRENT_DIR, "..", "..", "videos")
 sys.path.append(VIDEO_PATH)
 
+
 def run_yolo(video_path=None):
     if video_path is None:
         video_path = os.path.join(VIDEO_PATH, "video2_short.mp4")
-    else : 
-        video_path = os.path.join(VIDEO_PATH, video_path+".mp4")
-    
+    else:
+        video_path = os.path.join(VIDEO_PATH, video_path + ".mp4")
+
     MODEL_PATH = os.path.join(CURRENT_DIR, "kaggle_training.pt")
 
     model = YOLO(MODEL_PATH)
@@ -45,7 +46,7 @@ def run_yolo(video_path=None):
 
         frame_number += 1
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
     cv2.destroyAllWindows()
