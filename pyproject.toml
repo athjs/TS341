@@ -4,9 +4,10 @@ version = "0.1.0"
 description = "A Python package for TS341"
 readme = "README.md"
 
+#FIX: Mettez vos adresses mails svp la team.
 authors = [
     { name = "Amandine", email = "amandine.email@bordeaux-inp.fr" },
-    { name = "Anthony", email = "anthony.email@bordeaux-inp.fr" },
+    { name = "Antony THIERY", email = "antony.thiery@bordeaux-inp.fr" },
     { name = "Clément", email = "clement.email@bordeaux-inp.fr" },
     { name = "Mathis Pereira Pedro", email = "mpereiraped@bordeaux-inp.fr" },
 ]
@@ -18,9 +19,10 @@ dependencies = [
     "ultralytics (>=8.3.228,<9.0.0)",
     "opencv-contrib-python (>=4.12.0.88,<5.0.0.0)",
     "matplotlib (>=3.10.7,<4.0.0)",
+    "pyright (>=1.1.407,<2.0.0)",
 ]
 
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 
 [build-system]
 requires = ["poetry-core >= 2.0.0, <3.0.0 "]
@@ -53,3 +55,12 @@ select = ["D"]
 ignore = ["D417"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+#Pour pyright
+[tool.pyright]
+ignore = ["ultralytics"]
+typeCheckingMode = "basic"
+reportMissingTypeHints = "warning"
+reportUnknownVariableType = "warning"
+reportMissingImports = false
+reportUnknownMemberType = "warning"

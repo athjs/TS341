@@ -1,52 +1,23 @@
-import os
+"""Importing YOLO for learning."""
+
 from ultralytics import YOLO
-import cv2
-import sys
+from typing import Any
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Charger un modèle pré-entraîné (par ex. COCO)
+model: YOLO = YOLO(
+    "ts341_project/yolo_test/kaggle_training.pt"
+)  # tu peux utiliser yolov8s.pt, yolov8m.pt, etc.
 
-VIDEO_PATH = os.path.join(CURRENT_DIR, "..", "..", "videos")
-sys.path.append(VIDEO_PATH)
 
+def yolo_predict(image_path: str) -> Any:
+    """Effectue la prédiction YOLO sur une image donnée.
 
-def run_yolo(video_path=None):
-    if video_path is None:
-        video_path = os.path.join(VIDEO_PATH, "video2_short.mp4")
-    else:
-        video_path = os.path.join(VIDEO_PATH, video_path + ".mp4")
+    Args:
+        image_path (str): Chemin vers l'image à analyser.
 
-    MODEL_PATH = os.path.join(CURRENT_DIR, "kaggle_training.pt")
-
-    model = YOLO(MODEL_PATH)
-
-    frame_number = 0
-
-    for result in model.predict(source=video_path, stream=True, verbose=False):
-        frame = result.plot()
-        original_height, original_width = frame.shape[:2]
-        frame_resized = cv2.resize(frame, (1280, 720))
-        height, width = frame_resized.shape[:2]
-
-        height_ratio_resize = height / original_height
-        width_ratio_resize = width / original_width
-
-        detections = result.boxes.xyxy.cpu().numpy()
-        confidences = result.boxes.conf.cpu().numpy()
-        class_ids = result.boxes.cls.cpu().numpy()
-
-        yield (
-            frame_number,
-            frame_resized,
-            height_ratio_resize,
-            width_ratio_resize,
-            detections,
-            confidences,
-            class_ids,
-        )
-
-        frame_number += 1
-
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
-
-    cv2.destroyAllWindows()
+    Returns:
+        Any: Résultat retourné par YOLO (non typé officiellement).
+    """
+    results = model.predict(source=image_path)  # type: ignore
+    print(results)
+    return results
