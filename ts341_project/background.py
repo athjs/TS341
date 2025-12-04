@@ -5,21 +5,24 @@ The utils package provides an API call to ease video opening etc...
 
 from typing import Generator
 from typing import Sequence
-from typing_extensions import Any
-from numpy._core.numeric import ndarray
 import cv2 as cv
 import utils as u
 import numpy as np
 from threading import Thread
 from queue import Queue
+import logging
+
+logger = logging.getLogger(__name__)
 
 display_q: Queue = Queue(maxsize=1)
 
 
 def display_loop() -> None:
     """Displays the current frame."""
+    item: np.ndarray
+    frame: np.ndarray
     while True:
-        item: Any = display_q.get()
+        item = display_q.get()
         if item is None:
             return
         frame = item
@@ -35,6 +38,7 @@ def get_movings(
 
     Return the frame id, centroids for each moving object and a frame to show
     """
+    logger.info("Running centroids.")
     while True:
         ret: bool
         frame: np.ndarray
@@ -71,7 +75,6 @@ def write_movings(path: str):
             display_q.put_nowait(frame)
         except:
             pass
-    # Notes: Ecrire dans le CSV
     display_q.put(None)
     t.join()
     cap.release()
@@ -88,6 +91,7 @@ def get_contours(threshold: np.ndarray) -> Sequence[np.ndarray]:
 def get_moving_centroïds(contours: Sequence[np.ndarray]) -> list[tuple[int, int]]:
     """Returns centroids of each object contour of the video."""
     centroids: list[tuple[int, int]] = []
+    logging.basicConfig(filename="myapp.log", level=logging.INFO)
     for contour in contours:
         area: float = cv.contourArea(contour)
         # draw a contour only if it is big enough
