@@ -1,58 +1,8 @@
-"""Videos trating packages.
-
-The utils package provides an API call to ease video opening etc...
-"""
-
 import cv2 as cv
 import utils as u
 import numpy as np
 from threading import Thread
 from queue import Queue
-
-
-# def remove_background(path: str) -> dict[int, list[tuple[int, int]]]:
-#     """Open the video and remove background.
-#
-#     Return the video without background
-#     only with moving objects
-#     """
-#     cap: cv.VideoCapture = u.openvideo(path)
-#     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (3, 3))
-#     fgbg = cv.createBackgroundSubtractorMOG2()
-#     # For the creation of the video without backgorund.
-#     # frame_width: int = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
-#     # frame_height: int = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
-#     # fourcc = cv.VideoWriter_fourcc(*"mp4v")
-#     while 1:
-#         ret: bool
-#         frame: cv.Mat
-#         ret, frame = cap.read()
-#         if not ret:
-#             raise Exception("An error occured during the video")
-#         # Video without background
-#         fgmask: cv.Mat = fgbg.apply(frame)
-#         # thresholding the image to remove some noises
-#         threshold: cv.Mat
-#         fgmask = cv.morphologyEx(fgmask, cv.MORPH_OPEN, kernel)
-#         ret, threshold = cv.threshold(fgmask.copy(), 120, 255, cv.THRESH_BINARY)
-#         # removing some useless points (KNN like)
-#         contours: list[np.ndarray] = get_contours(threshold)
-#         centroids: list[tuple[int, int]] = get_moving_centroïds(contours)
-#         frame_id: int = int(cap.get(1))
-#         frame_centroids: dict[int, list[tuple[int, int]]] = {}
-#         frame_centroids[frame_id] = centroids
-#         yield frame_centroids
-#         print(frame_centroids)
-#         # add the frame to the video without background
-#         # open the raw video with rectangles on moving objects
-#         cv.imshow("Frame", frame)
-#         if cv.waitKey(30) & 0xFF == ord("q"):
-#             break
-#
-#     cap.release()
-#     cv.destroyAllWindows()
-#     return frame_centroids
-
 
 display_q = Queue(maxsize=1)
 
@@ -82,24 +32,26 @@ def frame_generator(cap, fgbg, kernel):
 
         yield frame_id, centroids, frame
 
-def main():
-    cap = u.openvideo("videos/video3")
+def get_movings():
+    cap = u.openvideo("videos/video2")
     fgbg = cv.createBackgroundSubtractorMOG2()
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (3,3))
-    t = Thread(target=display_loop, daemon=True)
-    t.start()
+    # t = Thread(target=display_loop, daemon=True)
+    # t.start()
 
     for frame_id, centroids, frame in frame_generator(cap,fgbg,kernel):
-        try:
-            display_q.put_nowait(frame)
-        except:
-            pass   # si l'afficheur n’a pas consommé, on écrase l’ancien
+        # try:
+        #     display_q.put_nowait(frame)
+        # except:
+        #     pass   # si l'afficheur n’a pas consommé, on écrase l’ancien
+        
+        yield frame_id, centroids, frame
 
         # traitement en parallèle
-        print(frame_id, centroids)
+        # print(frame_id, centroids)
 
-    display_q.put(None)
-    t.join()
+    # display_q.put(None)
+    # t.join()
     cap.release()
     cv.destroyAllWindows()
 
@@ -124,5 +76,5 @@ def get_moving_centroïds(contours: list[np.ndarray]) -> list[tuple[int, int]]:
             centroids.append((cx, cy))
     return centroids
 
-main()
+# get_movings()
 # remove_background("videos/video3")
