@@ -16,8 +16,7 @@ def run_yolo(
 ) -> Generator[
     Tuple[int, np.ndarray, float, float, np.ndarray, np.ndarray, np.ndarray], None, None
 ]:
-    """
-    Exécute YOLO sur une vidéo et renvoie les résultats frame par frame.
+    """Exécute YOLO sur une vidéo et renvoie les résultats frame par frame.
 
     Args:
         video_path (str, optional): Nom de la vidéo (sans extension) ou chemin complet.
