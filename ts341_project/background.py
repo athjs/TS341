@@ -3,6 +3,12 @@ import utils as u
 import numpy as np
 from threading import Thread
 from queue import Queue
+import os
+import sys
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+VIDEO_PATH = os.path.join(CURRENT_DIR, "..", "videos")
+sys.path.append(VIDEO_PATH)
 
 display_q = Queue(maxsize=1)
 
@@ -32,19 +38,20 @@ def frame_generator(cap, fgbg, kernel):
 
         yield frame_id, centroids, frame
 
-def get_movings():
-    cap = u.openvideo("videos/video2")
+def get_movings(video_name="video2_short"):
+    video_path = os.path.join(VIDEO_PATH, video_name)
+    cap = u.openvideo(video_path)
     fgbg = cv.createBackgroundSubtractorMOG2()
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (3,3))
     # t = Thread(target=display_loop, daemon=True)
     # t.start()
 
-    for frame_id, centroids, frame in frame_generator(cap,fgbg,kernel):
+    for frame_id, centroids, frame in frame_generator(cap, fgbg, kernel):
         # try:
         #     display_q.put_nowait(frame)
         # except:
         #     pass   # si l'afficheur n’a pas consommé, on écrase l’ancien
-        
+
         yield frame_id, centroids, frame
 
         # traitement en parallèle
@@ -54,6 +61,7 @@ def get_movings():
     # t.join()
     cap.release()
     cv.destroyAllWindows()
+
 
 def get_contours(threshold: cv.VideoCapture) -> list[np.ndarray]:
     """Returns contours of objects in a video thresholded."""

@@ -3,6 +3,13 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+import math
+from typing import List, Tuple
+
+from Butterworth import ButterworthLPF
+
+Butterworth_x = ButterworthLPF(cutoff=0.05, fs=1, order=3)
+Butterworth_y = ButterworthLPF(cutoff=0.05, fs=1, order=3)
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 YOLO_TEST_PATH = os.path.join(CURRENT_DIR, "..", "yolo_test")
@@ -14,73 +21,132 @@ sys.path.append(MOVINGS_PATH)
 from results import run_yolo
 from background import get_movings
 
-buffer_drone = []
+buffer_drone: List[List] = []
 
 values = []
 fig, ax = plt.subplots()
 
 plt.ion()
 
-def derivate(max_derivate):
-    if(len(buffer_drone)>=2):
-        # print(f"{buffer_drone[len(buffer_drone)-1]}")
-
-        position_box_t0 = buffer_drone[len(buffer_drone)-1][0]
-        position_box_t1 = buffer_drone[len(buffer_drone)-2][0]
-
-        position_t0 = np.array([(position_box_t0[0] + position_box_t0[2])/2, (position_box_t0[1] + position_box_t0[3])/2])
-        position_t1 = np.array([(position_box_t1[0] + position_box_t1[2])/2, (position_box_t1[1] + position_box_t1[3])/2])
-
-        
-
-        derivate = (position_t1-position_t0)[0]**2 + (position_t1-position_t0)[1]**2
+first_yolo_detection: bool = False
 
 
-        values.append(derivate)
+def carre_distance(centroid1: Tuple[float, float], centroid2: Tuple[float, float]) -> float:
+    """
+    Calcule la distance euclidienne au carré entre deux centroïdes.
 
-        ax.clear()
-        ax.plot(values)
-        ax.set_title("derivee sur 1 frame")
-        ax.set_xlabel("frame")
-        ax.set_ylabel("derivee sur 1 frame")
-        plt.pause(0.001)
+    centroid1 : (x1, y1)
+    centroid2 : (x2, y2)
 
-        if(derivate>=max_derivate):
-            return False
-        return True
-
-        # print(derivate)
-
-def nothing():
-    return 1
+    Retourne : float (distance^2)
+    """
+    return (centroid1[0]-centroid2[0])**2 + (centroid1[1]-centroid2[1])**2
 
 
-gen_yolo = run_yolo()
-gen_motion = get_movings()
+def closest_centroid(centroid_goal: Tuple[float, float], centroids_list: List[Tuple[float, float]]) -> Tuple[float, float]:
+    """
+    Retourne le centroïde dans centroids_list le plus proche de centroid_goal.
+
+    centroid_goal : (x, y)
+    centroids_list : liste de (x, y)
+
+    Retourne : (x, y) du centroïde le plus proche ou (0, 0) si vide
+    """
+    distance_min = math.inf
+    indice_min = 0
+    if(len(centroids_list)!=0):
+        for k in range(len(centroids_list)):
+            centroid = centroids_list[k]
+            distance = (centroid_goal[0]-centroid[0])**2 + (centroid_goal[1]-centroid[1])**2
+            if(distance <= distance_min):
+                distance_min = distance
+                indice_min = k
+        return centroids_list[indice_min]
+    else:
+        return (0.0, 0.0)
+
+
+video_name = "video2_short"
+
+if len(sys.argv) > 1:
+    video_name = sys.argv[1]
+
+print("Utilisation de la vidéo :", video_name)
+
+gen_yolo = run_yolo(video_name)
+gen_motion = get_movings(video_name)
+
 
 for (frame_number, frame_resized, height_ratio_resize, width_ratio_resize, detections, confidences, class_ids), (frame_id, centroids, motion_frame) in zip(gen_yolo, gen_motion):
+    print(f"Frame numéro {frame_number} : ", end="")
+    if (len(detections) == 0):
+        print("Aucune détection YOLO, ", end="")
 
-    x1, y1, x2, y2 = 0,0,0,0
+        if(first_yolo_detection==True):
+            print("mise à jour du filtre et du opencv")
+            close_centroid = closest_centroid(previous_close_centroid, centroids)
+            cv2.circle(frame_resized, (int(close_centroid[0]* width_ratio_resize), int(close_centroid[1]* height_ratio_resize)), 10, (0, 0, 255), -1)
 
-    if len(detections) == 0:
-        print("Aucune détection YOLO sur cette frame")
+            centroid_passe_bas=[0, 0]
+            centroid_passe_bas[0] = Butterworth_x.update(close_centroid[0])
+            centroid_passe_bas[1] = Butterworth_y.update(close_centroid[1])
+            cv2.circle(frame_resized, (int(centroid_passe_bas[0]* width_ratio_resize), int(centroid_passe_bas[1]* height_ratio_resize)), 10, (0, 255, 255), -1)
+
+            previous_close_centroid = close_centroid
+        else:
+            print("pas encore d'initialisation")
+
     else:
-        x1, y1, x2, y2 = detections[0]
-        centroid_yolo = [(x1+x2)/2, (y1+y2)/2]
-        print(f"{x1*width_ratio_resize}, {y1*height_ratio_resize}")
-        cv2.circle(frame_resized, (int(centroid_yolo[0]* width_ratio_resize), int(centroid_yolo[1]* height_ratio_resize)), 10, (0, 255, 0), -1)
+        print("Détection YOLO, ", end="")
+        if(first_yolo_detection == False):
+            print("initialisation")
+            first_yolo_detection=True
+            x1, y1, x2, y2 = detections[0]
+            centroid_yolo = [(x1+x2)/2, (y1+y2)/2]
 
-    for  det, conf, cls in zip( detections, confidences, class_ids):
-        x1, y1, x2, y2 = det
-        # print(f"Classe: {int(cls)}, Conf: {conf:.2f}, x1={x1}, y1={y1}, x2={x2}, y2={y2}")
-    
-        sys.stdout.flush()
-        buffer_drone.append([det, conf, cls])
+            Butterworth_x.update(centroid_yolo[0])
+            Butterworth_y.update(centroid_yolo[1])
 
-    if(not(derivate(50000))):
-           print(f"detection YOLO {frame_number} derivee non valide")
-    # print(f"detection YOLO {frame_number} derivee valide")
+            close_centroid = closest_centroid(centroid_yolo, centroids)
+            previous_centroid_passe_bas = centroid_yolo      
+            previous_close_centroid = centroid_yolo
+            previous_centroid_yolo = centroid_yolo
+        else:
+            print("mise à jour du filtre, du opencv et du YOLO. ", end="")
+            x1, y1, x2, y2 = detections[0]
+            centroid_yolo = [(x1+x2)/2, (y1+y2)/2]
 
-    
-    cv2.putText(frame_resized, f"derivee={12}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
-    cv2.imshow("Resultat YOLO", frame_resized)  
+            if(carre_distance(centroid_yolo, previous_centroid_yolo)<=10000):
+                print("Pas de saut de yolo")
+                cv2.circle(frame_resized, (int(centroid_yolo[0]* width_ratio_resize), int(centroid_yolo[1]* height_ratio_resize)), 10, (0, 255, 0), -1)
+
+                centroid_passe_bas=[0, 0]
+                centroid_passe_bas[0] = Butterworth_x.update(centroid_yolo[0])
+                centroid_passe_bas[1] = Butterworth_y.update(centroid_yolo[1])
+                cv2.circle(frame_resized, (int(centroid_passe_bas[0]* width_ratio_resize), int(centroid_passe_bas[1]* height_ratio_resize)), 10, (0, 255, 255), -1)
+
+                close_centroid = closest_centroid(centroid_passe_bas, centroids)
+                cv2.circle(frame_resized, (int(close_centroid[0]* width_ratio_resize), int(close_centroid[1]* height_ratio_resize)), 10, (0, 0, 255), -1)
+
+                previous_centroid_passe_bas = centroid_passe_bas
+                previous_centroid_yolo = centroid_yolo
+            else:
+                print("Saut de yolo")
+                close_centroid = closest_centroid(previous_close_centroid, centroids)
+                cv2.circle(frame_resized, (int(close_centroid[0]* width_ratio_resize), int(close_centroid[1]* height_ratio_resize)), 10, (0, 0, 255), -1)
+
+                centroid_passe_bas=[0, 0]
+                centroid_passe_bas[0] = Butterworth_x.update(close_centroid[0])
+                centroid_passe_bas[1] = Butterworth_y.update(close_centroid[1])
+                cv2.circle(frame_resized, (int(centroid_passe_bas[0]* width_ratio_resize), int(centroid_passe_bas[1]* height_ratio_resize)), 10, (0, 255, 255), -1)
+
+                previous_close_centroid = close_centroid
+
+        for det, conf, cls in zip(detections, confidences, class_ids):
+            buffer_drone.append([det, conf, cls])
+            sys.stdout.flush()
+
+    cv2.putText(frame_resized, f"YOLO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
+    cv2.putText(frame_resized, f"OpenCV", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+    cv2.putText(frame_resized, f"Butterworth", (50, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2)
+    cv2.imshow("Resultat YOLO", frame_resized)
