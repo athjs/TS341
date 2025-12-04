@@ -11,8 +11,9 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 VIDEO_PATH = os.path.join(CURRENT_DIR, "..", "..", "videos")
 sys.path.append(VIDEO_PATH)
 
+
 def run_yolo(
-    video_path: str = None
+    video_path: str = None,
 ) -> Generator[
     Tuple[int, np.ndarray, float, float, np.ndarray, np.ndarray, np.ndarray], None, None
 ]:
