@@ -1,4 +1,5 @@
-ts341_example/
+ts341_example/*
+videos/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

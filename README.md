@@ -15,6 +15,7 @@ sera utilisé poetry afin de gérer au mieux le versionning.
 
 - Pour le linting est utilisé **Pyright** pour la `CI`, pour le formattage **Ruff** pour `Pre-Commit`
 - Pour la propreté du code : **Pre-Commit**
+- Pour la vérification du typage : pyright avec sa configuration dans `pyproject.toml`
 
 #### Ressources utilisées
 - [delpeuch.net](https://delpeuch.net/blog)

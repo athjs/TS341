@@ -1,3 +1,3 @@
-"""Main module for TS341 project."""
+"""Nothing for the moment only to please docstring :)."""
 
 print("hello world!")

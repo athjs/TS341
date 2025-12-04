@@ -1,6 +1,6 @@
 """Permet d'essayer un modele pour générer les résultats formaté à l'évaluation."""
 
-from ultralytics import YOLO
+from ultralytics.yolo import YOLO
 import cv2
 
 model = YOLO("model_weigths/basic_yolo.pt")
