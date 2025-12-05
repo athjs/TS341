@@ -1,6 +1,8 @@
 """Importing YOLO for learning."""
 
-from ultralitics import YOLO
+# pyright: reportPrivateImportUsage=false
+# pyright: reportMissingImports=false
+from ultralytics import YOLO
 from typing import Any
 
 # Charger un modèle pré-entraîné (par ex. COCO)
