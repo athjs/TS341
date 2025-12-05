@@ -57,7 +57,7 @@ while True:
     frame_clicked = False  # reset pour chaque frame
 
     # redimension pour affichage
-    display: np.ndarray = cv2.resize(frame, None, fx=scale, fy=scale)
+    display = cv2.resize(frame, None, fx=scale, fy=scale)  # type: ignore[reportUnknownVariableType]
 
     while True:
         cv2.putText(
