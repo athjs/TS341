@@ -5,7 +5,15 @@ repos:
       - id: ruff
         args: ["check", "--select", "D", "--ignore", "D104"]
       - id: ruff-format
-
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright
+        entry: poetry run pyright
+        language: system
+        pass_filenames: false
+        types: [python]
+        args: ["--project", "."]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:

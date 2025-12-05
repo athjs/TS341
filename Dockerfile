@@ -1,8 +1,9 @@
 FROM python:3.13-slim AS builder
 RUN apt-get update && pip install --no-cache-dir poetry==1.8.4
 WORKDIR /app/
-COPY ./poetry.lock ./pyproject.toml /app/
-RUN poetry install
+COPY ./pyproject.toml /app/
+RUN poetry lock && \
+    poetry install --without dev
 COPY ./ts341_project/ app/
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
