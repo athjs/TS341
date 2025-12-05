@@ -19,8 +19,7 @@ class ButterworthLPF:
     """
 
     def __init__(self, cutoff: float, fs: float = 1.0, order: int = 3) -> None:
-        """Docstring for __init__
-        """
+        """Docstring for __init__"""
         self.cutoff = cutoff
         self.fs = fs
         self.order = order
