@@ -6,6 +6,7 @@ from numpy.typing import NDArray
 from typing import Iterator, List
 from pathlib import Path
 
+import cv2
 
 def result_score(xReel: int, yReel: int, xPred: int, yPred: int) -> float:
     """Estimate precision of results compared to expected results.
@@ -139,7 +140,7 @@ def evaluate_score(csv_path: str | Path) -> float:
     return total_score
 
 
-def evaluate_confusion_matrix(csv_path: str | Path) -> np.ndarray:
+def evaluate_confusion_matrix(csv_path: str | Path, tolerance : int) -> np.ndarray:
     """Évalue les performances du modèle sur une vidéo annotée.
 
     Args:
@@ -166,18 +167,18 @@ def evaluate_confusion_matrix(csv_path: str | Path) -> np.ndarray:
         y_real: int = int(row_real[2])
         x_pred: int = int(row_pred[1])
         y_pred: int = int(row_pred[2])
-
-        score: np.ndarray = confusion_matrix_score(x_real, y_real, x_pred, y_pred, 15)
+        """[PP, PN, NP, NN]"""
+        score: np.ndarray = confusion_matrix_score(x_real, y_real, x_pred, y_pred, tolerance)
         Matrix += score
 
     return Matrix
 
 
-def full_evaluation(nom_model: str, csv_path: str | Path) -> None:
+def full_evaluation(nom_model: str, csv_path: str | Path, tolerance) -> None:
     """Évalue un modèle sur une vidéo annotée, affiche score et matrice de confusion, et écrit le résultat dans un CSV."""
     # Calcul du score et de la matrice de confusion
     score: float = evaluate_score(csv_path)
-    confusion_matrix: np.ndarray = evaluate_confusion_matrix(csv_path)
+    confusion_matrix: np.ndarray = evaluate_confusion_matrix(csv_path, tolerance)
 
     # Affichage
     print("Score :", score)
@@ -185,14 +186,71 @@ def full_evaluation(nom_model: str, csv_path: str | Path) -> None:
 
     # Écriture du CSV
     data = [
-        [nom_model, score, confusion_matrix.tolist()]
+        [nom_model+"_"+str(tolerance), score, confusion_matrix.tolist()]
     ]  # .tolist() pour écrire proprement la matrice
     output_csv = Path("ts341_project/benchmark/evaluations.csv")
 
-    with open(output_csv, mode="w", newline="", encoding="utf-8") as f:
+    with open(output_csv, mode="a", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerows(data)
 
 
-csv_path = "ts341_project/benchmark/model_results/test_results.csv"
-full_evaluation("Test", csv_path)
+def read_csv_points(path):
+    """
+    Lit un CSV 'frame,x,y' et retourne un dict : {frame: (x, y)}
+    """
+    points = {}
+    with open(path, "r") as f:
+        lines = f.read().strip().split("\n")
+        for line in lines[1:]:   # on saute l'entête
+            frame, x, y = line.split(",")
+            points[int(frame)] = (int(float(x)), int(float(y)))
+    return points
+
+
+def generate_annotated_video(csv1_path, csv2_path, video_path, output_path="output.mp4"):
+    # Lecture manuelle des CSV
+    points1 = read_csv_points(csv1_path)
+    points2 = read_csv_points(csv2_path)
+
+    # Lecture vidéo
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        raise ValueError("Impossible d'ouvrir la vidéo")
+
+    # Infos vidéo
+    width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps    = cap.get(cv2.CAP_PROP_FPS)
+
+    # Writer de sortie
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+
+    frame_idx = 0
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Points du premier CSV (rouge)
+        if frame_idx in points1:
+            x1, y1 = points1[frame_idx]
+            cv2.circle(frame, (x1, y1), 6, (0, 0, 255), -1)
+
+        # Points du second CSV (vert)
+        if frame_idx in points2:
+            x2, y2 = points2[frame_idx]
+            cv2.circle(frame, (x2, y2), 6, (0, 255, 0), -1)
+
+        out.write(frame)
+        frame_idx += 1
+
+    cap.release()
+    out.release()
+    print(f"Vidéo générée : {output_path}")
+
+for i in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]:
+    csv_path = f"ts341_project/benchmark/model_results/Kaggle_dataset_{i}.csv"
+    full_evaluation(f"Kaggle_dataset_{i}", csv_path, 100)
+#generate_annotated_video("ts341_project/benchmark/model_results/real_results.csv", csv_path, "videos/capture_cloudy-daylight_True_10_03_14_35_15_cam1.mp4")

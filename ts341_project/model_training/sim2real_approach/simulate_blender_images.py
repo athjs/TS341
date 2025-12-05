@@ -114,7 +114,7 @@ def main() -> None:
     drone: bpy.types.Object = bpy.data.objects.get("model")
     if drone is None:
         raise ValueError("L'objet 'model' n'existe pas dans la scène Blender.")
-    give_output(200, drone, (0, 0))
+    give_output(1000, drone, (0, 0))
 
     print("Done.")
 
