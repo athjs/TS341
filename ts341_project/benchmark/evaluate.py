@@ -250,7 +250,6 @@ def generate_annotated_video(csv1_path, csv2_path, video_path, output_path="outp
     out.release()
     print(f"Vidéo générée : {output_path}")
 
-for i in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]:
-    csv_path = f"ts341_project/benchmark/model_results/Kaggle_dataset_{i}.csv"
-    full_evaluation(f"Kaggle_dataset_{i}", csv_path, 100)
-#generate_annotated_video("ts341_project/benchmark/model_results/real_results.csv", csv_path, "videos/capture_cloudy-daylight_True_10_03_14_35_15_cam1.mp4")
+csv_path = f"ts341_project/benchmark/model_results/Color_simu_0.1.csv"
+full_evaluation(f"Butterworth", csv_path, 100)
+generate_annotated_video("ts341_project/benchmark/model_results/real_results.csv", csv_path, "videos/capture_cloudy-daylight_True_10_03_14_35_15_cam1.mp4")

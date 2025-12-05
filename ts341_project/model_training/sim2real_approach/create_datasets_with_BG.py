@@ -88,7 +88,7 @@ def replace_with_color_BG(image: np.ndarray) -> np.ndarray:
 
 def __main__() -> None:
     """Point d'entrée principal."""
-    n_images: int = 200
+    n_images: int = 400
     n_BG: int = 103
 
     images: List[np.ndarray] = import_images(n_images)

@@ -43,12 +43,9 @@ def test_model(conf_min, model, video,nom_model):
         print("Conf_min :",conf_min, "| Progression :", int((frame_id-start_frame)/(end_frame-start_frame)*100),"%")
     f.close()
                     
-model = YOLO("ts341_project/model_weights/kaggle_dataset.pt")
+model = YOLO("ts341_project/model_weights/nature_simu.pt")
 video = cv2.VideoCapture("videos/capture_cloudy-daylight_True_10_03_14_35_15_cam1.mp4")
 video.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-for seuil in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]:
-    print("########################### ",seuil)
-    test_model(seuil, model, video,"Kaggle_dataset_"+str(seuil))
-    video.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+test_model(0.1, model, video,"Nature_simu_"+str(0.1))
 
 video.release()
