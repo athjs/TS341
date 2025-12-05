@@ -17,8 +17,6 @@ dependencies = [
     "flask >= 3.1.2",
     "ultralytics (>=8.3.228,<9.0.0)",
     "opencv-contrib-python (>=4.12.0.88,<5.0.0.0)",
-    "matplotlib (>=3.10.7,<4.0.0)",
-    "pyright (>=1.1.407,<2.0.0)",
 ]
 
 requires-python = ">=3.13"
@@ -38,6 +36,7 @@ pytest = "^7.4"
 pre-commit = "^4.3.0"
 ruff = ">=0.14.4"
 pyright = ">=1.1.407,<2.0.0"
+matplotlib = ">=3.10.7,<4.0.0"
 
 
 [[tool.poetry.source]]
@@ -46,8 +45,6 @@ url = "https://pypi.org/simple"
 priority = "primary"
 
 
-[tool.poetry.dependencies]
-matplotlib = {source = "pypi2"}
 [tool.poetry]
 package-mode = false
 #NOTE: Pour le moment, nous n'exportons pas de pacquets

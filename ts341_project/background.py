@@ -1,19 +1,18 @@
 """Module pour traitement vidéo avec suppression du fond et détection des objets en mouvement."""
 
-The utils package provides an API call to ease video opening etc...
-"""
-
 from typing import Generator
 from typing import Sequence
 import cv2 as cv
 import utils as u
-from threading import Thread
 from queue import Queue
+import numpy as np
+import os
 import logging
 
 logger = logging.getLogger(__name__)
 
 display_q: Queue = Queue(maxsize=1)
+VIDEO_PATH: str = "videos"
 
 
 def display_loop() -> None:
@@ -72,7 +71,7 @@ def get_movings(
     Yields:
         Tuple[int, list[tuple[int,int]], np.ndarray]: frame_id, centroids et frame.
     """
-    video_path = os.path.join(VIDEO_PATH, video_name)
+    video_path: str = os.path.join(VIDEO_PATH, video_name)
     cap: cv.VideoCapture = u.openvideo(video_path)
     if cap is None or not cap.isOpened():
         raise Exception(f"La vidéo {video_path} n'a pas pu être ouverte.")
