@@ -8,6 +8,7 @@ from pathlib import Path
 
 import cv2
 
+
 def result_score(xReel: int, yReel: int, xPred: int, yPred: int) -> float:
     """Estimate precision of results compared to expected results.
 
@@ -140,11 +141,12 @@ def evaluate_score(csv_path: str | Path) -> float:
     return total_score
 
 
-def evaluate_confusion_matrix(csv_path: str | Path, tolerance : int) -> np.ndarray:
+def evaluate_confusion_matrix(csv_path: str | Path, tolerance: int) -> np.ndarray:
     """Évalue les performances du modèle sur une vidéo annotée.
 
     Args:
         csv_path: chemin vers le fichier CSV contenant les annotations et les prédictions.
+        tolerance: rolerance considérée pour déterminer si un point est sur le drône ou pas
 
     Returns:
         Matrice de confusion
@@ -168,7 +170,9 @@ def evaluate_confusion_matrix(csv_path: str | Path, tolerance : int) -> np.ndarr
         x_pred: int = int(row_pred[1])
         y_pred: int = int(row_pred[2])
         """[PP, PN, NP, NN]"""
-        score: np.ndarray = confusion_matrix_score(x_real, y_real, x_pred, y_pred, tolerance)
+        score: np.ndarray = confusion_matrix_score(
+            x_real, y_real, x_pred, y_pred, tolerance
+        )
         Matrix += score
 
     return Matrix
@@ -186,7 +190,7 @@ def full_evaluation(nom_model: str, csv_path: str | Path, tolerance) -> None:
 
     # Écriture du CSV
     data = [
-        [nom_model+"_"+str(tolerance), score, confusion_matrix.tolist()]
+        [nom_model + "_" + str(tolerance), score, confusion_matrix.tolist()]
     ]  # .tolist() pour écrire proprement la matrice
     output_csv = Path("ts341_project/benchmark/evaluations.csv")
 
@@ -196,19 +200,20 @@ def full_evaluation(nom_model: str, csv_path: str | Path, tolerance) -> None:
 
 
 def read_csv_points(path):
-    """
-    Lit un CSV 'frame,x,y' et retourne un dict : {frame: (x, y)}
-    """
+    """Lit un CSV 'frame,x,y' et retourne un dict : {frame: (x, y)}."""
     points = {}
     with open(path, "r") as f:
         lines = f.read().strip().split("\n")
-        for line in lines[1:]:   # on saute l'entête
+        for line in lines[1:]:  # on saute l'entête
             frame, x, y = line.split(",")
             points[int(frame)] = (int(float(x)), int(float(y)))
     return points
 
 
-def generate_annotated_video(csv1_path, csv2_path, video_path, output_path="output.mp4"):
+def generate_annotated_video(
+    csv1_path, csv2_path, video_path, output_path="output.mp4"
+):
+    """Génère une video permettant de comparer les valeurs mises à la main et celles de la prédiction."""
     # Lecture manuelle des CSV
     points1 = read_csv_points(csv1_path)
     points2 = read_csv_points(csv2_path)
@@ -219,9 +224,9 @@ def generate_annotated_video(csv1_path, csv2_path, video_path, output_path="outp
         raise ValueError("Impossible d'ouvrir la vidéo")
 
     # Infos vidéo
-    width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps    = cap.get(cv2.CAP_PROP_FPS)
+    fps = cap.get(cv2.CAP_PROP_FPS)
 
     # Writer de sortie
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
@@ -250,6 +255,11 @@ def generate_annotated_video(csv1_path, csv2_path, video_path, output_path="outp
     out.release()
     print(f"Vidéo générée : {output_path}")
 
+
 csv_path = f"ts341_project/benchmark/model_results/Color_simu_0.1.csv"
 full_evaluation(f"Butterworth", csv_path, 100)
-generate_annotated_video("ts341_project/benchmark/model_results/real_results.csv", csv_path, "videos/capture_cloudy-daylight_True_10_03_14_35_15_cam1.mp4")
+generate_annotated_video(
+    "ts341_project/benchmark/model_results/real_results.csv",
+    csv_path,
+    "videos/capture_cloudy-daylight_True_10_03_14_35_15_cam1.mp4",
+)
