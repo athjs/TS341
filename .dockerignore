@@ -1,3 +1,23 @@
 #Deletes all files beside README.md
 *.md
 !README.md
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.git/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.log
+.DS_Store
+*.weights
+*.pt
+*.onnx

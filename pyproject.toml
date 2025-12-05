@@ -17,6 +17,7 @@ dependencies = [
     "flask >= 3.1.2",
     "ultralytics (>=8.3.228,<9.0.0)",
     "opencv-contrib-python (>=4.12.0.88,<5.0.0.0)",
+    "numpy (>=2,<2.3.0)",
 ]
 
 requires-python = ">=3.13"
@@ -32,12 +33,12 @@ python = ">=3.13"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4"
-pre-commit = "^4.3.0"
-ruff = ">=0.14.4"
-pyright = ">=1.1.407,<2.0.0"
-matplotlib = ">=3.10.7,<4.0.0"
-
+# pytest = "^7.4"
+# pre-commit = "^4.3.0"
+# ruff = ">=0.14.4"
+# pyright = ">=1.1.407,<2.0.0"
+# matplotlib = ">=3.10.7,<4.0.0"
+#
 
 [[tool.poetry.source]]
 name = "pypi2"
