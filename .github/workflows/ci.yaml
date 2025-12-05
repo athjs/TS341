@@ -28,8 +28,8 @@ jobs:
       - name: Install deps
         run: poetry install --with dev
 
-      - name: Run pre-commit
-        run: poetry run pre-commit run --all-files
+      - name: Formatting check
+        run: poetry run ruff check
 
       - name: Run tests
         run: poetry run pytest --cov=your_package || echo "No tests yet"

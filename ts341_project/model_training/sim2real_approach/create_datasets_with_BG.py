@@ -50,7 +50,7 @@ def import_BG(n_BG: int) -> List[np.ndarray]:
 
     BG_images: List[np.ndarray] = []
     for i in range(n_BG):
-        img: Image.Image = Image.open(f"{BG_path}{i+1}.jpg")
+        img: Image.Image = Image.open(f"{BG_path}{i + 1}.jpg")
         img = img.resize((1920, 1080))
         BG_images.append(np.array(img))
 
