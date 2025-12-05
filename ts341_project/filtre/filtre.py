@@ -10,6 +10,7 @@ from typing import List, Tuple, Sequence
 import csv
 
 from Butterworth import ButterworthLPF
+import logging
 
 # Filtre Butterworth pour X et Y
 Butterworth_x = ButterworthLPF(cutoff=0.05, fs=1, order=3)
@@ -72,6 +73,9 @@ def run_filter(video_name: str) -> None:
     with open(CURRENT_DIR+"/data_butterworth.csv", "w", newline="", encoding="utf-8") as csvfile:
         pass
 
+    open("log_filtre.log", "w").close()
+    logging.basicConfig(filename="log_filtre.log", level=logging.INFO)
+
     first_yolo_detection: bool = False
 
     gen_yolo = run_yolo(video_name)
@@ -101,11 +105,16 @@ def run_filter(video_name: str) -> None:
         centroid_passe_bas: list[float] = [0.0, 0.0]
         close_centroid: list[float] = [0.0, 0.0]
 
-        print(f"Frame numéro {frame_number} : ", end="")
+        log: str = ""
+
+        print(f"Frame numero {frame_number} : ", end="")
+        log = f"Frame numero {frame_number} : "
         if len(detections) == 0:
             print("Aucune détection YOLO, ", end="")
+            log += "Aucune détection YOLO, "
             if first_yolo_detection:
-                print("mise à jour du filtre et du opencv")
+                print("mise a jour du filtre et du opencv")
+                log += "mise a jour du filtre et du opencv"
                 close_centroid = closest_centroid(
                     previous_close_centroid, centroids
                 )
@@ -135,12 +144,15 @@ def run_filter(video_name: str) -> None:
                 previous_close_centroid = close_centroid
             else:
                 print("pas encore d'initialisation")
+                log +="pas encore d'initialisation"
         else:
-            print("Détection YOLO, ", end="")
+            print("Detection YOLO, ", end="")
+            log +="Detection YOLO, "
             x1, y1, x2, y2 = detections[0]
             centroid_yolo: list[float] = [(x1 + x2) / 2.0, (y1 + y2) / 2.0]
             if not first_yolo_detection:
                 print("initialisation")
+                log +="initialisation"
                 first_yolo_detection = True
                 Butterworth_x.update(centroid_yolo[0])
                 Butterworth_y.update(centroid_yolo[1])
@@ -151,9 +163,11 @@ def run_filter(video_name: str) -> None:
                 previous_close_centroid = centroid_yolo
                 previous_centroid_yolo = centroid_yolo
             else:
-                print("mise à jour du filtre, du opencv et du YOLO. ", end="")
+                print("mise a jour du filtre, du opencv et du YOLO. ", end="")
+                log+="mise a jour du filtre, du opencv et du YOLO. "
                 if carre_distance(centroid_yolo, previous_centroid_yolo) <= 10000:
                     print("Pas de saut de yolo")
+                    log+="Pas de saut de yolo"
                     cv2.circle(
                         frame_resized,
                         (
@@ -193,6 +207,7 @@ def run_filter(video_name: str) -> None:
                     previous_centroid_yolo = centroid_yolo
                 else:
                     print("Saut de yolo")
+                    log+="Saut de yolo"
                     close_centroid = closest_centroid(
                         previous_close_centroid, centroids
                     )
@@ -225,6 +240,7 @@ def run_filter(video_name: str) -> None:
                 sys.stdout.flush()
         data = [frame_number, int(centroid_passe_bas[0]), int(centroid_passe_bas[1])]
         ecrit_csv(data)
+        logging.info(log)
 
         # Affichage
         cv2.putText(
@@ -249,6 +265,6 @@ def run_filter(video_name: str) -> None:
 video_name = "video2_short"
 if len(sys.argv) > 1:
     video_name = sys.argv[1]
-print("Utilisation de la vidéo :", video_name)
+print("Utilisation de la video :", video_name)
 
 run_filter(video_name)
