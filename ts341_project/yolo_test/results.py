@@ -1,5 +1,7 @@
 """Importing YOLO for learning."""
 
+# pyright: reportPrivateImportUsage=false
+# pyright: reportMissingImports=false
 from ultralytics import YOLO
 from typing import Any
 

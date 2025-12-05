@@ -1,39 +1,53 @@
-"""Module ButterworthLPF : filtre passe-bas de Butterworth pour un signal 1D."""
+"""Filtre passe-bas Butterworth pour suivi de centroïdes."""
 
-from scipy.signal import butter, lfilter_zi, lfilter
-from typing import List
+import numpy as np
+from numpy.typing import NDArray
+from scipy.signal import butter, lfilter, lfilter_zi
+from typing import Tuple, cast
 
 
 class ButterworthLPF:
-    """Implémentation d'un filtre passe-bas de Butterworth pour un signal 1D.
+    """
+    Filtre passe-bas Butterworth unidimensionnel.
 
     Attributes:
-        b (List[float]): Coefficients du numérateur du filtre.
-        a (List[float]): Coefficients du dénominateur du filtre.
-        zi (List[float]): Condition initiale pour l'état du filtre.
+        cutoff (float): Fréquence de coupure normalisée (0 < cutoff < 0.5)
+        fs (float): Fréquence d'échantillonnage
+        order (int): Ordre du filtre
+        b (NDArray[np.float64]): Coefficients du numérateur du filtre
+        a (NDArray[np.float64]): Coefficients du dénominateur du filtre
+        zi (NDArray[np.float64]): Conditions initiales du filtre
     """
 
-    def __init__(self, cutoff: float, fs: float, order: int = 2) -> None:
-        """Initialise le filtre Butterworth passe-bas.
+    def __init__(self, cutoff: float, fs: float = 1.0, order: int = 3) -> None:
+        self.cutoff = cutoff
+        self.fs = fs
+        self.order = order
 
-        Args:
-            cutoff (float): Fréquence de coupure du filtre (Hz).
-            fs (float): Fréquence d'échantillonnage du signal (Hz).
-            order (int, optional): Ordre du filtre. Défaut à 2.
-        """
-        self.b: List[float]
-        self.a: List[float]
-        self.b, self.a = butter(order, cutoff / (0.5 * fs), btype="low")
-        self.zi: List[float] = lfilter_zi(self.b, self.a)
+        # Conception du filtre Butterworth
+        res = butter(self.order, self.cutoff, btype="low", fs=self.fs)
+        # Cast explicite pour rassurer Pyright
+        b_arr, a_arr = cast(Tuple[np.ndarray, np.ndarray], res)
+        self.b: NDArray[np.float64] = np.asarray(b_arr, dtype=np.float64)
+        self.a: NDArray[np.float64] = np.asarray(a_arr, dtype=np.float64)
+
+        # Initialisation du filtre
+        zi_arr = lfilter_zi(self.b, self.a)
+        self.zi: NDArray[np.float64] = np.asarray(zi_arr, dtype=np.float64)
 
     def update(self, x: float) -> float:
-        """Met à jour le filtre avec une nouvelle valeur et renvoie la valeur filtrée.
+        """
+        Met à jour le filtre avec une nouvelle valeur et renvoie la valeur filtrée.
 
         Args:
-            x (float): Nouvelle valeur d'entrée à filtrer.
+            x (float): Nouvelle valeur à filtrer
 
         Returns:
-            float: Valeur filtrée correspondant à l'entrée x.
+            float: Valeur filtrée
         """
-        y, self.zi = lfilter(self.b, self.a, [x], zi=self.zi)
-        return y[0]
+        y_raw, zi_new_raw = lfilter(self.b, self.a, [x], zi=self.zi)
+        # Conversion explicite en float64 pour Pyright
+        y: NDArray[np.float64] = np.asarray(y_raw, dtype=np.float64)
+        zi_new: NDArray[np.float64] = np.asarray(zi_new_raw, dtype=np.float64)
+        self.zi = zi_new
+        return float(y[0])
