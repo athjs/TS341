@@ -55,7 +55,7 @@ def run_yolo(
             # forcer Pyright à comprendre que c'est un Tensor
             xyxy_tensor: torch.Tensor = boxes.xyxy  # type: ignore
             conf_tensor: torch.Tensor = boxes.conf  # type: ignore
-            cls_tensor: torch.Tensor = boxes.cls    # type: ignore
+            cls_tensor: torch.Tensor = boxes.cls  # type: ignore
 
             detections = xyxy_tensor.cpu().numpy()
             confidences = conf_tensor.cpu().numpy()

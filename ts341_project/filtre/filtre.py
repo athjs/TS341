@@ -35,6 +35,7 @@ first_yolo_detection: bool = False
 
 # --- Fonctions utilitaires --- #
 
+
 def carre_distance(
     centroid1: Tuple[float, float], centroid2: Tuple[float, float]
 ) -> float:
@@ -43,8 +44,7 @@ def carre_distance(
 
 
 def closest_centroid(
-    centroid_goal: Tuple[float, float],
-    centroids_list: Sequence[Tuple[float, float]]
+    centroid_goal: Tuple[float, float], centroids_list: Sequence[Tuple[float, float]]
 ) -> Tuple[float, float]:
     """Retourne le centroïde dans centroids_list le plus proche de centroid_goal."""
     distance_min = math.inf
@@ -59,6 +59,7 @@ def closest_centroid(
                 indice_min = k
         return centroids_list[indice_min]
     return (0.0, 0.0)
+
 
 # --- Lecture vidéo --- #
 
@@ -85,7 +86,6 @@ for (
     confidences,
     class_ids,
 ), (frame_id, centroids_raw, motion_frame_raw) in zip(gen_yolo, gen_motion):
-    
     # Forcer tous les centroïdes en float
     centroids: List[Tuple[float, float]] = [
         (float(cx), float(cy)) for cx, cy in centroids_raw
