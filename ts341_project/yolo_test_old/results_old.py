@@ -23,7 +23,6 @@ def run_yolo(
     None,
 ]:
     """Exécute YOLO sur une vidéo et renvoie les résultats frame par frame."""
-
     if video_path is None:
         video_path = os.path.join(VIDEO_PATH, "video2_short.mp4")
     else:

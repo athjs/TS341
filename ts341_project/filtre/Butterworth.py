@@ -7,8 +7,7 @@ from typing import Tuple, cast
 
 
 class ButterworthLPF:
-    """
-    Filtre passe-bas Butterworth unidimensionnel.
+    """Filtre passe-bas Butterworth unidimensionnel.
 
     Attributes:
         cutoff (float): Fréquence de coupure normalisée (0 < cutoff < 0.5)
@@ -20,6 +19,8 @@ class ButterworthLPF:
     """
 
     def __init__(self, cutoff: float, fs: float = 1.0, order: int = 3) -> None:
+        """Docstring for __init__
+        """
         self.cutoff = cutoff
         self.fs = fs
         self.order = order
@@ -36,8 +37,7 @@ class ButterworthLPF:
         self.zi: NDArray[np.float64] = np.asarray(zi_arr, dtype=np.float64)
 
     def update(self, x: float) -> float:
-        """
-        Met à jour le filtre avec une nouvelle valeur et renvoie la valeur filtrée.
+        """Met à jour le filtre avec une nouvelle valeur et renvoie la valeur filtrée.
 
         Args:
             x (float): Nouvelle valeur à filtrer
