@@ -62,7 +62,7 @@ def ecrit_csv(data : list[int]) -> None:
         writer.writerow(data)
 
 def run_filter(video_name: str) -> None:
-    """La fonction secrete qui fait tout le filtre"""
+    """La fonction secrete qui fait tout le filtre."""
     buffer_drone: List[List] = []
 
     values: List[float] = []
