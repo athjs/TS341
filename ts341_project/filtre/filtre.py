@@ -30,9 +30,7 @@ from background import get_movings
 # --- Fonctions utilitaires --- #
 
 
-def carre_distance(
-    centroid1: list[float], centroid2: list[float]
-) -> float:
+def carre_distance(centroid1: list[float], centroid2: list[float]) -> float:
     """Calcule la distance euclidienne au carré entre deux centroïdes."""
     return (centroid1[0] - centroid2[0]) ** 2 + (centroid1[1] - centroid2[1]) ** 2
 
@@ -54,13 +52,17 @@ def closest_centroid(
         return centroids_list[indice_min]
     return [0.0, 0.0]
 
-def ecrit_csv(data : list[int]) -> None:
+
+def ecrit_csv(data: list[int]) -> None:
     """Ecrit une ligne dans le fichier csv."""
-    with open(CURRENT_DIR+"/data_butterworth.csv", "a", newline="", encoding="utf-8") as csvfile:
+    with open(
+        CURRENT_DIR + "/data_butterworth.csv", "a", newline="", encoding="utf-8"
+    ) as csvfile:
         writer = csv.writer(csvfile)
-        
+
         # Écrire toutes les lignes
         writer.writerow(data)
+
 
 def run_filter(video_name: str) -> None:
     """La fonction secrete qui fait tout le filtre."""
@@ -70,7 +72,9 @@ def run_filter(video_name: str) -> None:
     fig, ax = plt.subplots()
     plt.ion()
 
-    with open(CURRENT_DIR+"/data_butterworth.csv", "w", newline="", encoding="utf-8") as csvfile:
+    with open(
+        CURRENT_DIR + "/data_butterworth.csv", "w", newline="", encoding="utf-8"
+    ) as csvfile:
         pass
 
     open("log_filtre.log", "w").close()
@@ -115,9 +119,7 @@ def run_filter(video_name: str) -> None:
             if first_yolo_detection:
                 print("mise a jour du filtre et du opencv")
                 log += "mise a jour du filtre et du opencv"
-                close_centroid = closest_centroid(
-                    previous_close_centroid, centroids
-                )
+                close_centroid = closest_centroid(previous_close_centroid, centroids)
                 cv2.circle(
                     frame_resized,
                     (
@@ -128,8 +130,8 @@ def run_filter(video_name: str) -> None:
                     (0, 0, 255),
                     -1,
                 )
-                centroid_passe_bas[0]= Butterworth_x.update(close_centroid[0])
-                centroid_passe_bas[1]= Butterworth_y.update(close_centroid[1])
+                centroid_passe_bas[0] = Butterworth_x.update(close_centroid[0])
+                centroid_passe_bas[1] = Butterworth_y.update(close_centroid[1])
 
                 cv2.circle(
                     frame_resized,
@@ -144,30 +146,28 @@ def run_filter(video_name: str) -> None:
                 previous_close_centroid = close_centroid
             else:
                 print("pas encore d'initialisation")
-                log +="pas encore d'initialisation"
+                log += "pas encore d'initialisation"
         else:
             print("Detection YOLO, ", end="")
-            log +="Detection YOLO, "
+            log += "Detection YOLO, "
             x1, y1, x2, y2 = detections[0]
             centroid_yolo: list[float] = [(x1 + x2) / 2.0, (y1 + y2) / 2.0]
             if not first_yolo_detection:
                 print("initialisation")
-                log +="initialisation"
+                log += "initialisation"
                 first_yolo_detection = True
                 Butterworth_x.update(centroid_yolo[0])
                 Butterworth_y.update(centroid_yolo[1])
-                close_centroid = closest_centroid(
-                    centroid_yolo, centroids
-                )
+                close_centroid = closest_centroid(centroid_yolo, centroids)
                 previous_centroid_passe_bas = centroid_yolo
                 previous_close_centroid = centroid_yolo
                 previous_centroid_yolo = centroid_yolo
             else:
                 print("mise a jour du filtre, du opencv et du YOLO. ", end="")
-                log+="mise a jour du filtre, du opencv et du YOLO. "
+                log += "mise a jour du filtre, du opencv et du YOLO. "
                 if carre_distance(centroid_yolo, previous_centroid_yolo) <= 10000:
                     print("Pas de saut de yolo")
-                    log+="Pas de saut de yolo"
+                    log += "Pas de saut de yolo"
                     cv2.circle(
                         frame_resized,
                         (
@@ -178,8 +178,8 @@ def run_filter(video_name: str) -> None:
                         (0, 255, 0),
                         -1,
                     )
-                    centroid_passe_bas[0]= Butterworth_x.update(centroid_yolo[0])
-                    centroid_passe_bas[1]= Butterworth_y.update(centroid_yolo[1])
+                    centroid_passe_bas[0] = Butterworth_x.update(centroid_yolo[0])
+                    centroid_passe_bas[1] = Butterworth_y.update(centroid_yolo[1])
                     cv2.circle(
                         frame_resized,
                         (
@@ -190,9 +190,7 @@ def run_filter(video_name: str) -> None:
                         (0, 255, 255),
                         -1,
                     )
-                    close_centroid = closest_centroid(
-                        centroid_passe_bas, centroids
-                    )
+                    close_centroid = closest_centroid(centroid_passe_bas, centroids)
                     cv2.circle(
                         frame_resized,
                         (
@@ -207,7 +205,7 @@ def run_filter(video_name: str) -> None:
                     previous_centroid_yolo = centroid_yolo
                 else:
                     print("Saut de yolo")
-                    log+="Saut de yolo"
+                    log += "Saut de yolo"
                     close_centroid = closest_centroid(
                         previous_close_centroid, centroids
                     )
@@ -221,8 +219,8 @@ def run_filter(video_name: str) -> None:
                         (0, 0, 255),
                         -1,
                     )
-                    centroid_passe_bas[0]= Butterworth_x.update(close_centroid[0])
-                    centroid_passe_bas[1]= Butterworth_y.update(close_centroid[1])
+                    centroid_passe_bas[0] = Butterworth_x.update(close_centroid[0])
+                    centroid_passe_bas[1] = Butterworth_y.update(close_centroid[1])
                     cv2.circle(
                         frame_resized,
                         (
@@ -247,7 +245,13 @@ def run_filter(video_name: str) -> None:
             frame_resized, "YOLO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2
         )
         cv2.putText(
-            frame_resized, "OpenCV", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2
+            frame_resized,
+            "OpenCV",
+            (50, 100),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 0, 255),
+            2,
         )
         cv2.putText(
             frame_resized,
@@ -259,6 +263,7 @@ def run_filter(video_name: str) -> None:
             2,
         )
         cv2.imshow("Resultat YOLO", frame_resized)
+
 
 # --- Lecture vidéo --- #
 
